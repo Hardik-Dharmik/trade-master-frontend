@@ -2,6 +2,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import logo from "../../Assets/Images/logo.png";
 import ExStock from "./ExStock";
+import { stockData } from "../../Services/Constants/stockNames";
 
 const topStocks = [
   "Reliance",
@@ -20,18 +21,11 @@ const topStocks = [
 
 function Home() {
   const [input, setInput] = useState("");
-
-  const handleSearch = (e) => {
-    setInput(e.target.value);
-    console.log(input);
-  };
+  let stocks = stockData;
 
   const onSearch = (searchTerm) => {
     setInput(searchTerm);
-    console.log("Search term =>", searchTerm);
   };
-
-  console.log(input);
 
   return (
     <div className="flex flex-col items-center min-h-screen px-2 bg-gray-100 py-2">
@@ -62,10 +56,10 @@ function Home() {
       </div>
 
       <div className="w-3/5 sm:w-2/5 bg-white mb-5 rounded-lg">
-        {topStocks
+        {stocks
           .filter((item) => {
             const searchTerm = input.toLowerCase();
-            const fullName = item.toLowerCase();
+            const fullName = item.fullName.toLowerCase();
 
             return (
               searchTerm &&
@@ -77,20 +71,20 @@ function Home() {
           .map((item, index) => (
             <div
               className={`${input !== "" ? "p-1" : "p-0"} ${
-                index == 0 && "bg-blue-500 text-white"
+                index === 0 && "bg-blue-500 text-white"
               }
               ${index > 0 && "hover:bg-gray-300"} cursor-pointer`}
-              onClick={() => onSearch(item)}
-              key={item}
+              onClick={() => onSearch(item.fullName)}
+              key={item.ISINNo + item.symbol + item.fullName + item.exchange}
             >
-              {item}
+              {item.fullName}
             </div>
           ))}
       </div>
 
       <div className="flex flex-wrap items-center space-x-3 md:w-2/5 w-3/5 gap-y-3 justify-center">
         {topStocks.map((stock) => (
-          <ExStock stockName={stock} />
+          <ExStock key={stock} stockName={stock} />
         ))}
       </div>
     </div>

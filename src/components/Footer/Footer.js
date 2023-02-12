@@ -1,7 +1,5 @@
 import logo from "../../Assets/Images/logo.png";
 import { HeartIcon } from "@heroicons/react/24/solid";
-import HeaderLinks from "../Header/HeaderLinks";
-import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -10,7 +8,7 @@ function Footer() {
         <img src={logo} alt="" className="h-16 w-16" />
         <p>Trade Master</p>
       </div>
-      <p class="text-sm text-gray-800 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0  flex">
+      <p className="text-sm text-gray-800 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0  flex">
         Made with <HeartIcon className="h-5 w-5 mx-1 text-red-600" /> in India
       </p>
     </div>
