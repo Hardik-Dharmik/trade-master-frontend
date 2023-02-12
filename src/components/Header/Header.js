@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import {
   MagnifyingGlassIcon,
   UserCircleIcon,
+  UserIcon,
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -19,14 +20,14 @@ function Header() {
 
   return (
     <>
-      <header className="hidden md:flex items-center justify-between bg-white px-5">
+      <header className="hidden md:flex items-center justify-between bg-white px-5 text-sm">
         {/* Left  */}
         <div className="flex items-center">
           {/* Logo  */}
           <img src={logo} alt="Logo" className="h-16 w-16" />
 
           {/* Links  */}
-          <div className="flex items-center space-x-5 ml-2">
+          <div className="flex items-center space-x-5 ml-2 text-gray-800">
             {/* Home */}
             <Link to="/">
               <HeaderLinks link="/" linkName="Home" />
@@ -63,10 +64,11 @@ function Header() {
 
           {/* Login Signup   */}
           <div className="flex space-x-5">
-            <button className="px-4 py-1  rounded-3xl hover:bg-blue-400 hover:text-white">
-              Login
+            <button className="flex items-center px-2 py-1 rounded-2xl border border-blue-400 hover:bg-blue-400 hover:text-white group">
+              <UserIcon className="h-4 w-4 mx-1 text-gray-500 group-hover:text-white" />
+              <p className="mx-1  group-hover:text-white">Login</p>
             </button>
-            <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
+            <button className="px-4 py-1  rounded-2xl hover:bg-blue-400 hover:text-white">
               Signup
             </button>
           </div>
