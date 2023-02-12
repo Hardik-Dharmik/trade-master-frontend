@@ -38,7 +38,7 @@ function Home() {
           placeholder="Search Company"
           className="bg-gray-200 flex-grow focus:outline-none mx-4 px-2 text-base"
         />
-        <MagnifyingGlassIcon className="h-5 w-5 mx-2 text-gray-600" />
+        <MagnifyingGlassIcon className="hidden sm:flex h-5 w-5 mx-2 text-gray-600" />
       </div>
 
       <div className="flex flex-wrap items-center space-x-3 md:w-2/5 w-3/5 gap-y-3 justify-center">
