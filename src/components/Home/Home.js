@@ -3,6 +3,7 @@ import { useState } from "react";
 import logo from "../../Assets/Images/logo.png";
 import ExStock from "./ExStock";
 import { stockData } from "../../Services/Constants/stockNames";
+import { useNavigate } from "react-router-dom";
 
 const topStocks = [
   "Reliance",
@@ -21,10 +22,14 @@ const topStocks = [
 
 function Home() {
   const [input, setInput] = useState("");
+  let navigate = useNavigate();
+
   let stocks = stockData;
 
-  const onSearch = (searchTerm) => {
+  const onSearch = (searchTerm, stockCode) => {
     setInput(searchTerm);
+    if (stockCode === "NSE") navigate(`/stock/:${stockCode + ".NE"}`);
+    else navigate(`/stock/${stockCode + ".BO"}`);
   };
 
   return (
@@ -55,7 +60,7 @@ function Home() {
         <MagnifyingGlassIcon className="h-5 w-5 mx-2 text-gray-600" />
       </div>
 
-      <div className="w-3/5 sm:w-2/5 bg-white mb-5 rounded-lg">
+      <div className="w-4/6 sm:w-2/5 bg-white mb-5 rounded-lg">
         {stocks
           .filter((item) => {
             const searchTerm = input.toLowerCase();
@@ -74,10 +79,12 @@ function Home() {
                 index === 0 && "bg-blue-500 text-white"
               }
               ${index > 0 && "hover:bg-gray-300"} cursor-pointer`}
-              onClick={() => onSearch(item.fullName)}
+              onClick={() =>
+                onSearch(item.fullName, item.symbol, item.exchange)
+              }
               key={item.ISINNo + item.symbol + item.fullName + item.exchange}
             >
-              {item.fullName}
+              {item.fullName} - {item.exchange}
             </div>
           ))}
       </div>
