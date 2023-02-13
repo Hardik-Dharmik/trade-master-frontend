@@ -7,7 +7,7 @@ function Stock() {
   const [stockData, setstockData] = useState(null);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:4000/stock/${stockID}`)
+    fetch(`https://trade-master-backend.vercel.app/stock/${stockID}`)
       .then((response) => response.json())
       .then((response) => {
         setstockData(response.response.result[0]);
@@ -18,7 +18,7 @@ function Stock() {
 
   console.log(stockData);
   return (
-    <div className="flex px-5 min-h-screen bg-gray-100 w-fit">
+    <div className="flex px-5 min-h-screen bg-gray-100 min-w-screen">
       <div className="p-2 flex flex-col">
         <div className="flex flex-col py-2">
           <div className="flex items-baseline">
