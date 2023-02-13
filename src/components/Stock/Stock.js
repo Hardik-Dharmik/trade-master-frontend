@@ -18,7 +18,7 @@ function Stock() {
 
   console.log(stockData);
   return (
-    <div className="flex px-5 min-h-screen bg-gray-100 min-w-screen">
+    <div className="flex px-5 min-h-screen bg-gray-100 min-w-fit sm:w-screen ">
       <div className="p-2 flex flex-col">
         <div className="flex flex-col py-2">
           <div className="flex items-baseline">
