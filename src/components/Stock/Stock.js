@@ -155,7 +155,7 @@ function Stock() {
         </div>
       </div>
 
-      <div className="flex flex-col mt-5 px-2 w-3/5 lg:flex-grow py-2  ">
+      <div className="flex flex-col mt-5 px-2 flex-grow py-2  ">
         <Summary stockData={stockData} />
         <Statistics stockData={stockData} />
       </div>
