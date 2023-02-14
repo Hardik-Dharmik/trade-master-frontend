@@ -83,7 +83,7 @@ function Header() {
         </div>
       </header>
 
-      <header className="flex flex-col md:hidden ">
+      <header className="flex flex-col md:hidden">
         <div className="flex flex-grow justify-between px-2 items-center cursor-pointer">
           <img src={logo} alt="Logo" className="h-16 w-16" />
 
