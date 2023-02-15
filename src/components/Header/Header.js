@@ -34,8 +34,8 @@ function Header() {
             </Link>
 
             {/* Dashboard  */}
-            <Link to="/">
-              <HeaderLinks link="/" linkName="Dashboard" />
+            <Link to="/dashboard">
+              <HeaderLinks link="/dashboard" linkName="Dashboard" />
             </Link>
 
             {/* Portfolio  */}
@@ -103,8 +103,8 @@ function Header() {
             </Link>
 
             {/* Dashboard  */}
-            <Link to="/">
-              <HeaderLinks link="/" linkName="Dashboard" />
+            <Link to="/dashboard">
+              <HeaderLinks link="/dashboard" linkName="Dashboard" />
             </Link>
 
             {/* Portfolio  */}

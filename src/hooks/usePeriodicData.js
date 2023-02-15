@@ -5,8 +5,11 @@ function usePeriodicData(timePeriod, stockID) {
   const interval = rangeToInterval(timePeriod);
   const [data, setData] = useState(null);
   console.log(timePeriod, stockID);
+
+  const URL = `${process.env.REACT_APP_BACKEND_API_URL}/history/${stockID}/${interval}/${timePeriod}`;
+
   useEffect(() => {
-    fetch(`http://localhost:4000/history/${stockID}/${interval}/${timePeriod}`)
+    fetch(URL)
       .then((response) => response.json())
       .then((response) => {
         setData(response.response);

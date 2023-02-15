@@ -63,7 +63,7 @@ function Stock() {
 
               <div>
                 <label
-                  for="exampleNumber0"
+                  for="exampleNumber1"
                   class="form-label inline-block mb-2 text-gray-700"
                 >
                   Buy at
@@ -71,12 +71,28 @@ function Stock() {
                 <input
                   type="number"
                   class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                  id="exampleNumber0"
-                  // placeholder="Ex. 1, 10, 100, 500 etc"
+                  id="exampleNumber1"
                   value={stockData.regularMarketPrice.raw}
                   disabled
                 />
               </div>
+
+              <div>
+                <label
+                  for="exampleNumber2"
+                  class="form-label inline-block mb-2 text-gray-700"
+                >
+                  Order Cost
+                </label>
+                <input
+                  type="number"
+                  class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                  id="exampleNumber2"
+                  value={stockData.regularMarketPrice.raw * stockNum}
+                  disabled
+                />
+              </div>
+
               <button class="w-full text-white bg-green-400 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 BUY
               </button>
