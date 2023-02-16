@@ -39,13 +39,13 @@ function Header() {
             </Link>
 
             {/* Portfolio  */}
-            <Link to="/">
-              <HeaderLinks link="/" linkName="Portfolio" />
+            <Link to="/portfolio">
+              <HeaderLinks link="/portfolio" linkName="Portfolio" />
             </Link>
 
             {/* Transactions  */}
-            <Link to="/">
-              <HeaderLinks link="/" linkName="Transaction" />
+            <Link to="/transaction">
+              <HeaderLinks link="/transaction" linkName="Transaction" />
             </Link>
           </div>
         </div>
@@ -108,13 +108,13 @@ function Header() {
             </Link>
 
             {/* Portfolio  */}
-            <Link to="/">
-              <HeaderLinks link="/" linkName="Portfolio" />
+            <Link to="/portfolio">
+              <HeaderLinks link="/portfolio" linkName="Portfolio" />
             </Link>
 
             {/* Transactions  */}
-            <Link to="/">
-              <HeaderLinks link="/" linkName="Transaction" />
+            <Link to="/transaction">
+              <HeaderLinks link="/transaction" linkName="Transaction" />
             </Link>
 
             {/* Login Signup   */}

@@ -5,6 +5,8 @@ import Home from "./components/Home/Home";
 import Footer from "./components/Footer/Footer";
 import Stock from "./components/Stock/Stock";
 import Dashboard from "./Pages/Dashboard";
+import Portfolio from "./Pages/Portfolio";
+import Transaction from "./Pages/Transaction";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
             <Route exact path="/" element={<Home />} />
             <Route path="/about" element={<p>About</p>} />
             <Route exact path="/dashboard" element={<Dashboard />} />
+            <Route exact path="/portfolio" element={<Portfolio />} />
+            <Route exact path="/transaction" element={<Transaction />} />
             <Route path="/stock/:stockID" element={<Stock />} />
           </Routes>
         </div>
