@@ -47,6 +47,11 @@ function Header() {
             <Link to="/transaction">
               <HeaderLinks link="/transaction" linkName="Transaction" />
             </Link>
+
+            {/* Watchlist  */}
+            <Link to="/watchlist">
+              <HeaderLinks link="/watchlist" linkName="Watchlist" />
+            </Link>
           </div>
         </div>
 
@@ -115,6 +120,11 @@ function Header() {
             {/* Transactions  */}
             <Link to="/transaction">
               <HeaderLinks link="/transaction" linkName="Transaction" />
+            </Link>
+
+            {/* Watchlist  */}
+            <Link to="/watchlist">
+              <HeaderLinks link="/watchlist" linkName="Watchlist" />
             </Link>
 
             {/* Login Signup   */}

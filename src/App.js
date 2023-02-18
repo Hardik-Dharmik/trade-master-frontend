@@ -7,6 +7,7 @@ import Stock from "./components/Stock/Stock";
 import Dashboard from "./Pages/Dashboard";
 import Portfolio from "./Pages/Portfolio";
 import Transaction from "./Pages/Transaction";
+import Watchlist from "./Pages/Watchlist";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route exact path="/dashboard" element={<Dashboard />} />
             <Route exact path="/portfolio" element={<Portfolio />} />
             <Route exact path="/transaction" element={<Transaction />} />
+            <Route exact path="/watchlist" element={<Watchlist />} />
             <Route path="/stock/:stockID" element={<Stock />} />
           </Routes>
         </div>
