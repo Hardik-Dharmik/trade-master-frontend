@@ -26,9 +26,11 @@ function Home() {
 
   let stocks = stockData;
 
-  const onSearch = (searchTerm, stockCode) => {
+  const onSearch = (searchTerm, stockCode, exchange) => {
     setInput(searchTerm);
-    if (stockCode === "NSE") navigate(`/stock/:${stockCode + ".NE"}`);
+    console.log(searchTerm);
+    console.log(stockCode);
+    if (exchange === "NSE") navigate(`/stock/${stockCode + ".NS"}`);
     else navigate(`/stock/${stockCode + ".BO"}`);
   };
 
