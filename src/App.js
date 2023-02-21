@@ -8,6 +8,8 @@ import Dashboard from "./Pages/Dashboard";
 import Portfolio from "./Pages/Portfolio";
 import Transaction from "./Pages/Transaction";
 import Watchlist from "./Pages/Watchlist";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route exact path="/portfolio" element={<Portfolio />} />
             <Route exact path="/transaction" element={<Transaction />} />
             <Route exact path="/watchlist" element={<Watchlist />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/signup" element={<Signup />} />
             <Route path="/stock/:stockID" element={<Stock />} />
           </Routes>
         </div>

@@ -69,10 +69,12 @@ function Header() {
 
           {/* Login Signup   */}
           <div className="flex space-x-5">
-            <button className="flex items-center px-2 py-1 rounded-2xl border border-blue-400 hover:bg-blue-400 hover:text-white group">
-              <UserIcon className="h-4 w-4 mx-1 text-gray-500 group-hover:text-white" />
-              <p className="mx-1  group-hover:text-white">Login</p>
-            </button>
+            <Link to="/login">
+              <button className="flex items-center px-2 py-1 rounded-2xl border border-blue-400 hover:bg-blue-400 hover:text-white group">
+                <UserIcon className="h-4 w-4 mx-1 text-gray-500 group-hover:text-white" />
+                <p className="mx-1  group-hover:text-white">Login</p>
+              </button>
+            </Link>
             <button className="px-4 py-1  rounded-2xl hover:bg-blue-400 hover:text-white">
               Signup
             </button>

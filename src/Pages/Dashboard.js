@@ -2,14 +2,6 @@ import { useState, useEffect } from "react";
 import DashboardCard from "../components/Dashboard/DashboardCard";
 import Graph from "../components/Graph/Graph";
 
-{
-  /*
-52 h 
-52 h ch 
-52 h ch p
-*/
-}
-
 function Dashboard() {
   const [index, setIndex] = useState("%5EBSESN");
   const [stockData, setstockData] = useState(null);

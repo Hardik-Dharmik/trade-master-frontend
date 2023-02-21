@@ -177,24 +177,24 @@ const portfolioData = [
 
 function WatchlistTable() {
   return (
-    <div class="relative overflow-x-auto">
-      <table class="w-4/5 text-sm text-left text-gray-500 dark:text-gray-400 mx-auto">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+    <div className="relative overflow-x-auto">
+      <table className="w-4/5 text-sm text-left text-gray-500 dark:text-gray-400 mx-auto">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" class="px-4 py-3">
+            <th scope="col" className="px-4 py-3">
               Symbol
             </th>
-            <th scope="col" class="px-4 py-3">
+            <th scope="col" className="px-4 py-3">
               Stock name
             </th>
 
-            <th scope="col" class="px-4 py-3">
+            <th scope="col" className="px-4 py-3">
               Current price
             </th>
-            <th scope="col" class="px-4 py-3">
+            <th scope="col" className="px-4 py-3">
               Change
             </th>
-            <th scope="col" class="px-4 py-3">
+            <th scope="col" className="px-4 py-3">
               Change %
             </th>
           </tr>
