@@ -75,9 +75,11 @@ function Header() {
                 <p className="mx-1  group-hover:text-white">Login</p>
               </button>
             </Link>
-            <button className="px-4 py-1  rounded-2xl hover:bg-blue-400 hover:text-white">
-              Signup
-            </button>
+            <Link to="/signup">
+              <button className="px-4 py-1  rounded-2xl hover:bg-blue-400 hover:text-white">
+                Signup
+              </button>
+            </Link>
           </div>
 
           {/* Profile Logout */}
@@ -130,22 +132,26 @@ function Header() {
             </Link>
 
             {/* Login Signup   */}
-            {/* <div className="flex flex-col space-y-3">
-              <button className="px-4 py-1  rounded-3xl hover:bg-blue-400 hover:text-white">
-                Login
-              </button>
-              <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
-                Signup
-              </button>
-            </div> */}
+            <div className="flex flex-col space-y-3">
+              <Link to="/login">
+                <button className="px-4 py-1  rounded-3xl hover:bg-blue-400 hover:text-white">
+                  Login
+                </button>
+              </Link>
+              <Link to="/signup">
+                <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
+                  Signup
+                </button>
+              </Link>
+            </div>
 
             {/* Profile Logout */}
-            <div className="flex  space-x-3 items-center">
+            {/* <div className="flex  space-x-3 items-center">
               <UserCircleIcon className="h-9 w-9 text-gray-500 cursor-pointer" />
               <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
                 Logout
               </button>
-            </div>
+            </div> */}
           </div>
         )}
       </header>
