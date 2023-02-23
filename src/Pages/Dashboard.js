@@ -27,8 +27,6 @@ function Dashboard() {
 
   if (!stockData) return null;
 
-  console.log(stockData);
-
   const summary1 = [
     {
       pointName: "Previous Close",

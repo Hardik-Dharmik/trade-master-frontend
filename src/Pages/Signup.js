@@ -22,7 +22,6 @@ function Signup() {
   };
 
   const handleSignin = () => {
-    console.log(formData);
     fetch(`${process.env.REACT_APP_BACKEND_API_URL}/api/auth/register`, {
       method: "POST",
 
@@ -34,7 +33,6 @@ function Signup() {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         navigate("/login");
       });
   };

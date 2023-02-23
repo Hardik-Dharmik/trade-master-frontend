@@ -25,7 +25,6 @@ function Login({ msg }) {
   };
 
   const handleLogin = () => {
-    console.log(formData);
     fetch(`${process.env.REACT_APP_BACKEND_API_URL}/api/auth/login`, {
       method: "POST",
 

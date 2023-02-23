@@ -173,7 +173,10 @@ function Header() {
             {user !== null && (
               <div className="flex  space-x-3 items-center">
                 <UserCircleIcon className="h-9 w-9 text-gray-500 cursor-pointer" />
-                <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
+                <button
+                  className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white"
+                  onClick={handleLogout}
+                >
                   Logout
                 </button>
               </div>
