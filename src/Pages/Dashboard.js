@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import DashboardCard from "../components/Dashboard/DashboardCard";
 import Graph from "../components/Graph/Graph";
+import { useRecoilValue } from "recoil";
+import { userState, tokenState } from "../atoms/userAtom";
+import Login from "./Login";
 
 function Dashboard() {
+  const token = useRecoilValue(userState);
+
   const [index, setIndex] = useState("%5EBSESN");
   const [stockData, setstockData] = useState(null);
 
@@ -15,6 +20,10 @@ function Dashboard() {
         setstockData(response.response.result[0]);
       });
   }, [index]);
+
+  if (!token) {
+    return <Login msg="Please login to continue !!" />;
+  }
 
   if (!stockData) return null;
 

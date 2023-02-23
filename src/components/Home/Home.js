@@ -6,18 +6,18 @@ import { stockData } from "../../Services/Constants/stockNames";
 import { useNavigate } from "react-router-dom";
 
 const topStocks = [
-  "Reliance",
-  "TCS",
-  "HDFC Bank",
-  "Infosys",
-  "HUL",
-  "ICIC Bank",
-  "SBI",
-  "Tata Motors",
-  "HCL Tech",
-  "Asian Paints",
-  "Wipro",
-  "Bharti Airtel",
+  ["Reliance", "RELIANCE.NS"],
+  ["TCS", "TCS.NS"],
+  ["HDFC Bank", "HDFCBANK.NS"],
+  ["Infosys", "INFY.BO"],
+  ["HUL", "HINDUNILVR.NS"],
+  ["ICIC Bank", "ICICIBANK.NS"],
+  ["SBI", "SBIN.NS"],
+  ["Tata Motors", "TATAMOTORS.NS"],
+  ["HCL Tech", "HCLTECH.NS"],
+  ["Asian Paints", "ASIANPAINT.NS"],
+  ["Wipro", "WIPRO.NS"],
+  ["Bharti Airtel", "BHARTIARTL.NS"],
 ];
 
 function Home() {
@@ -93,7 +93,11 @@ function Home() {
 
       <div className="flex flex-wrap items-center space-x-3 md:w-2/5 w-3/5 gap-y-3 justify-center">
         {topStocks.map((stock) => (
-          <ExStock key={stock} stockName={stock} />
+          <ExStock
+            key={stock[0] + stock[1]}
+            stockName={stock[0]}
+            stockID={stock[1]}
+          />
         ))}
       </div>
     </div>

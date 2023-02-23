@@ -8,14 +8,24 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { userState, tokenState } from "../../atoms/userAtom";
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const [user, setuser] = useRecoilState(userState);
+  const [token, settoken] = useRecoilState(tokenState);
 
   const toggle = () => {
-    console.log("Clicoe", open);
     setOpen(!open);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    settoken(null);
+    setuser(null);
   };
 
   return (
@@ -58,37 +68,49 @@ function Header() {
         {/* Right  */}
         <div className="flex items-center space-x-5 flex-grow justify-end">
           {/* Search  */}
-          <div className="flex items-center bg-gray-100 px-5 py-1 w-2/5  rounded-3xl space-x-2 justify-between">
-            <input
-              type="text"
-              className="bg-gray-100 focus:outline-none text-sm flex-grow"
-              placeholder="Search stocks"
-            />
-            <MagnifyingGlassIcon className="h-5 w-5 text-gray-600" />
-          </div>
+          {/* {user === null && (
+            <div className="flex items-center bg-gray-100 px-5 py-1 w-2/5  rounded-3xl space-x-2 justify-between">
+              <input
+                type="text"
+                className="bg-gray-100 focus:outline-none text-sm flex-grow"
+                placeholder="Search stocks"
+              />
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-600" />
+            </div>
+          )} */}
 
           {/* Login Signup   */}
-          <div className="flex space-x-5">
-            <Link to="/login">
-              <button className="flex items-center px-2 py-1 rounded-2xl border border-blue-400 hover:bg-blue-400 hover:text-white group">
-                <UserIcon className="h-4 w-4 mx-1 text-gray-500 group-hover:text-white" />
-                <p className="mx-1  group-hover:text-white">Login</p>
-              </button>
-            </Link>
-            <Link to="/signup">
-              <button className="px-4 py-1  rounded-2xl hover:bg-blue-400 hover:text-white">
-                Signup
-              </button>
-            </Link>
-          </div>
+          {!user && (
+            <div className="flex space-x-5">
+              <Link to="/login">
+                <button className="flex items-center px-2 py-1 rounded-2xl border border-blue-400 hover:bg-blue-400 hover:text-white group">
+                  <UserIcon className="h-4 w-4 mx-1 text-gray-500 group-hover:text-white" />
+                  <p className="mx-1  group-hover:text-white">Login</p>
+                </button>
+              </Link>
+              <Link to="/signup">
+                <button className="px-4 py-1  rounded-2xl hover:bg-blue-400 hover:text-white">
+                  Signup
+                </button>
+              </Link>
+            </div>
+          )}
 
           {/* Profile Logout */}
-          {/* <div className="flex space-x-5">
-          <UserCircleIcon className="h-9 w-9 text-gray-500 cursor-pointer" />
-          <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
-            Logout
-          </button>
-        </div> */}
+          {user && (
+            <div className="flex space-x-5 items-center">
+              <UserCircleIcon className="h-9 w-9 text-gray-500 cursor-pointer" />
+              {user !== null && (
+                <div className="flex">{user && <p>{user}</p>}</div>
+              )}
+              <button
+                className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -132,26 +154,30 @@ function Header() {
             </Link>
 
             {/* Login Signup   */}
-            <div className="flex flex-col space-y-3">
-              <Link to="/login">
-                <button className="px-4 py-1  rounded-3xl hover:bg-blue-400 hover:text-white">
-                  Login
-                </button>
-              </Link>
-              <Link to="/signup">
-                <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
-                  Signup
-                </button>
-              </Link>
-            </div>
+            {user === null && (
+              <div className="flex flex-col space-y-3">
+                <Link to="/login">
+                  <button className="px-4 py-1  rounded-3xl hover:bg-blue-400 hover:text-white">
+                    Login
+                  </button>
+                </Link>
+                <Link to="/signup">
+                  <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
+                    Signup
+                  </button>
+                </Link>
+              </div>
+            )}
 
             {/* Profile Logout */}
-            {/* <div className="flex  space-x-3 items-center">
-              <UserCircleIcon className="h-9 w-9 text-gray-500 cursor-pointer" />
-              <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
-                Logout
-              </button>
-            </div> */}
+            {user !== null && (
+              <div className="flex  space-x-3 items-center">
+                <UserCircleIcon className="h-9 w-9 text-gray-500 cursor-pointer" />
+                <button className="px-4 py-1  rounded-3xl border border-blue-400 hover:bg-blue-400 hover:text-white">
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         )}
       </header>

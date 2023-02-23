@@ -2,12 +2,14 @@ import { useState } from "react";
 import FormButton from "../components/Form/FormButton";
 import FormFooter from "../components/Form/FormFooter";
 import { UserIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  let navigate = useNavigate();
   const [type, setType] = useState("password");
   const [formData, setFormData] = useState({
     email: "",
-    username: "",
+    name: "",
     password: "",
     cpassword: "",
   });
@@ -17,6 +19,24 @@ function Signup() {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleSignin = () => {
+    console.log(formData);
+    fetch(`${process.env.REACT_APP_BACKEND_API_URL}/api/auth/register`, {
+      method: "POST",
+
+      body: JSON.stringify(formData),
+
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        navigate("/login");
+      });
   };
 
   return (
@@ -36,8 +56,8 @@ function Signup() {
                 id="username"
                 type="text"
                 placeholder="Username"
-                name="username"
-                value={formData.username}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
               />
               <UserIcon className="h-5 w-5 ml-2 text-gray-500" />
@@ -120,7 +140,13 @@ function Signup() {
           </div>
 
           <div class="flex items-center justify-between">
-            <FormButton text="Signup" />
+            <button
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={handleSignin}
+            >
+              Signup
+            </button>
             <div class="flex items-center my-3">
               <input
                 id="checked-checkbox"

@@ -10,30 +10,42 @@ import Transaction from "./Pages/Transaction";
 import Watchlist from "./Pages/Watchlist";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
+import Test from "./Test";
+import {
+  RecoilRoot,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+} from "recoil";
 
 function App() {
   return (
-    <div className="mx-auto ">
-      <Router>
-        <Header />
+    <RecoilRoot>
+      <div className="mx-auto ">
+        <Router>
+          <Header />
 
-        <div>
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/about" element={<p>About</p>} />
-            <Route exact path="/dashboard" element={<Dashboard />} />
-            <Route exact path="/portfolio" element={<Portfolio />} />
-            <Route exact path="/transaction" element={<Transaction />} />
-            <Route exact path="/watchlist" element={<Watchlist />} />
-            <Route exact path="/login" element={<Login />} />
-            <Route exact path="/signup" element={<Signup />} />
-            <Route path="/stock/:stockID" element={<Stock />} />
-          </Routes>
-        </div>
+          <div>
+            <Routes>
+              <Route exact path="/" element={<Home />} />
+              <Route path="/about" element={<p>About</p>} />
+              <Route exact path="/dashboard" element={<Dashboard />} />
+              <Route exact path="/portfolio" element={<Portfolio />} />
+              <Route exact path="/transaction" element={<Transaction />} />
+              <Route exact path="/watchlist" element={<Watchlist />} />
+              <Route exact path="/login" element={<Login />} />
+              <Route exact path="/signup" element={<Signup />} />
+              <Route path="/stock/:stockID" element={<Stock />} />
+            </Routes>
+          </div>
 
-        <Footer />
-      </Router>
-    </div>
+          {/* <Test /> */}
+
+          <Footer />
+        </Router>
+      </div>
+    </RecoilRoot>
   );
 }
 
