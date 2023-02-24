@@ -1,14 +1,100 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
+import useLiveData from "../../hooks/useLiveData";
 import Graph from "../Graph/Graph";
 import Statistics from "../Statistics/Statistics";
 import Summary from "../Summary/Summary";
+import protobuf from "protobufjs";
+var Buffer = require("buffer/").Buffer;
 
 function Stock() {
   const { stockID } = useParams();
   const [stockData, setstockData] = useState(null);
   const [openModal, setopenModal] = useState(false);
   const [stockNum, setStockNum] = useState(0);
+  const [liveData, setLiveData] = useState(null);
+  let symbolData = {};
+  const ws = useRef(null);
+
+  useEffect(() => {
+    const URL = `${process.env.REACT_APP_BACKEND_API_URL}/stock/${stockID}`;
+
+    fetch(URL)
+      .then((response) => response.json())
+      .then((response) => {
+        console.log("resp->", response);
+        setstockData(response.response.result[0]);
+      });
+  }, []);
+
+  useEffect(() => {
+    let currentTime = new Date(),
+      t = true;
+
+    let hours = currentTime.getHours();
+    if ((hours < 9 || hours >= 15) && t) {
+      setLiveData({
+        change: parseFloat(stockData?.regularMarketChange.raw).toFixed(2),
+        changePercent: parseFloat(
+          stockData?.regularMarketChangePercent.raw
+        ).toFixed(2),
+        price: parseFloat(stockData?.regularMarketPrice.raw).toFixed(2),
+        time: new Date().toLocaleString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        }),
+      });
+    } else {
+      console.log("Live data on!!");
+      ws.current = new WebSocket("wss://streamer.finance.yahoo.com");
+      let wsCurrent = null;
+      protobuf.load("/YPricingData.proto", (err, root) => {
+        if (err) {
+          return console.log(err);
+        }
+        const Yaticker = root.lookupType("yaticker");
+        const symbols = [stockID];
+
+        // for (let i = 0; i < symbols.length; i++) {
+        //   symbolData[symbols[i]] = null;
+        // }
+
+        ws.current.onopen = function open() {
+          console.log("connected");
+          ws.current.send(
+            JSON.stringify({
+              subscribe: symbols,
+            })
+          );
+        };
+
+        ws.current.onclose = function close() {
+          console.log("disconnected");
+        };
+
+        wsCurrent = ws.current;
+
+        ws.current.onmessage = function incoming(data) {
+          console.log("comming message");
+          const response = Yaticker.decode(new Buffer(data.data, "base64"));
+          // console.log(response);
+          // symbolData[response.id] = response;
+          // console.log(symbolData);
+          setLiveData({
+            change: parseFloat(response.change).toFixed(2),
+            changePercent: parseFloat(response.changePercent).toFixed(2),
+            price: parseFloat(response.price).toFixed(2),
+            time: new Date().toLocaleString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            }),
+          });
+        };
+      });
+    }
+  }, [stockData]);
 
   const Modal = stockData && (
     <div
@@ -103,79 +189,72 @@ function Stock() {
     </div>
   );
 
-  useEffect(() => {
-    const URL = `${process.env.REACT_APP_BACKEND_API_URL}/stock/${stockID}`;
-
-    fetch(URL)
-      .then((response) => response.json())
-      .then((response) => {
-        setstockData(response.response.result[0]);
-      });
-  }, []);
-
-  if (!stockData) return null;
-
-  console.log(stockData);
-
   return (
-    <div className="flex flex-col md:flex-row px-5 min-h-screen bg-gray-100 min-w-fit ">
-      <div className="p-2 flex flex-col">
-        <div className="flex flex-col md:flex-row md:items-end items-start justify-between">
-          <div className="flex flex-col py-2">
-            <div className="flex items-baseline">
-              <p className="text-lg font-semibold">{stockData.longName}</p>
-              <p className="text-md font-semibold ml-2">({stockData.symbol})</p>
+    stockData &&
+    liveData && (
+      <div className="flex flex-col md:flex-row px-5 min-h-screen bg-gray-100 min-w-fit ">
+        <div className="p-2 flex flex-col">
+          <div className="flex flex-col md:flex-row md:items-end items-start justify-between">
+            <div className="flex flex-col py-2">
+              <div className="flex items-baseline">
+                <p className="text-lg font-semibold">{stockData.longName}</p>
+                <p className="text-md font-semibold ml-2">
+                  ({stockData.symbol})
+                </p>
+              </div>
+              <p className="text-sm my-1">{stockData.exchange}</p>
+              <div className="flex items-baseline">
+                <p className="text-3xl text-gray-800 font-semibold">
+                  {liveData && parseFloat(liveData.price).toFixed(2)} ₹
+                </p>
+                <p
+                  className={`mx-3 text-xl font-semibold ${
+                    liveData && liveData.change > 0
+                      ? "text-green-500"
+                      : "text-red-700"
+                  }`}
+                >
+                  {liveData && liveData.change > 0 && "+"}
+                  {liveData && parseFloat(liveData.change).toFixed(2)}
+                </p>
+                <p
+                  className={`text-xl font-semibold ${
+                    liveData?.changePercent > 0
+                      ? "text-green-500"
+                      : "text-red-700"
+                  }`}
+                >
+                  ({liveData?.changePercent > 0 && "+"}
+                  {liveData && parseFloat(liveData.changePercent).toFixed(2)}%)
+                </p>
+              </div>
+              <p className="my-1 text-xs">Price at {liveData?.time}</p>
             </div>
-            <p className="text-sm my-1">{stockData.exchange}</p>
-            <div className="flex items-baseline">
-              <p className="text-3xl text-gray-800 font-semibold">
-                {stockData.regularMarketPrice.fmt} ₹
-              </p>
-              <p
-                className={`mx-3 text-xl font-semibold ${
-                  stockData.regularMarketChange.raw > 0
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
-              >
-                {stockData.regularMarketChange.raw > 0 && "+"}
-                {stockData.regularMarketChange.fmt}
-              </p>
-              <p
-                className={`text-xl font-semibold ${
-                  stockData.regularMarketChange.raw > 0
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
-              >
-                ({stockData.regularMarketChange.raw > 0 && "+"}
-                {stockData.regularMarketChangePercent.fmt})
-              </p>
-            </div>
-            <p className="my-1 text-xs">
-              Price at {stockData.regularMarketTime.fmt}
-            </p>
+
+            <button className="bg-blue-400 text-white rounded-lg hover:bg-blue-500 mr-10  h-fit w-fit mb-10 px-5 py-2">
+              Add to watchlist
+            </button>
+
+            <button
+              className="bg-green-400 text-white rounded-lg hover:bg-green-500 mr-5  h-fit w-fit mb-10 px-5 py-2"
+              onClick={() => setopenModal(true)}
+            >
+              BUY
+            </button>
+
+            {openModal && Modal}
           </div>
-
-          <button
-            className="bg-green-400 text-white rounded-lg hover:bg-green-500 mr-28  h-fit w-fit mb-10 px-5 py-2"
-            onClick={() => setopenModal(true)}
-          >
-            BUY
-          </button>
-
-          {openModal && Modal}
+          <div>
+            <Graph symbol={stockData.symbol} />
+          </div>
         </div>
-        <div>
-          <Graph symbol={stockData.symbol} />
+
+        <div className="flex flex-col mt-5 px-2 flex-grow py-2  ">
+          <Summary stockData={stockData} />
+          <Statistics stockData={stockData} />
         </div>
       </div>
-
-      <div className="flex flex-col mt-5 px-2 flex-grow py-2  ">
-        <Summary stockData={stockData} />
-        <Statistics stockData={stockData} />
-      </div>
-    </div>
+    )
   );
 }
 

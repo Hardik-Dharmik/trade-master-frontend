@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import protobuf from "protobufjs";
 var Buffer = require("buffer/").Buffer;
+// import { stockData } from "../Services/Constants/stockNames";
 
-function Test() {
+function useLiveData(stockID) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -16,7 +17,7 @@ function Test() {
         console.log("connected");
         ws.send(
           JSON.stringify({
-            subscribe: ["TATASTEEL.NS"],
+            subscribe: [stockID],
           })
         );
       };
@@ -34,19 +35,7 @@ function Test() {
     });
   }, []);
 
-  if (!data) return;
-
-  return (
-    <div className="text-3xl">
-      <p>{data.price}</p>
-      <p className={`${data.change >= 0 ? "text-green-500" : "text-red-500"}`}>
-        {data.change}
-      </p>
-      <p className={`${data.change >= 0 ? "text-green-500" : "text-red-500"}`}>
-        {data.changePercent}
-      </p>
-    </div>
-  );
+  return [data];
 }
 
-export default Test;
+export default useLiveData;

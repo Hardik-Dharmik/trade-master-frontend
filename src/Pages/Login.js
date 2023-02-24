@@ -2,15 +2,17 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { UserIcon, EyeIcon } from "@heroicons/react/24/outline";
 import { useRecoilState } from "recoil";
-import { userState, tokenState } from "../atoms/userAtom";
+import { userState, tokenState, firstTimeLogin } from "../atoms/userAtom";
 import { useNavigate } from "react-router-dom";
 import Colors from "../components/Alerts/Message";
 
 function Login({ msg }) {
   let navigate = useNavigate();
   const [type, setType] = useState("password");
+  const [error, seterror] = useState(null);
   const [user, setUser] = useRecoilState(userState);
   const [token, setToken] = useRecoilState(tokenState);
+  const [firsttimeLogin, setfirstTimeLogin] = useRecoilState(firstTimeLogin);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -39,9 +41,13 @@ function Login({ msg }) {
         if (json.success) {
           setUser(json.username);
           setToken(json.token);
+          setfirstTimeLogin(true);
           window.localStorage.setItem("user", json.username);
           window.localStorage.setItem("token", json.authtoken);
+          window.localStorage.setItem("firstTimeLogin", true);
           navigate("/");
+        } else {
+          seterror("Invalid credentials");
         }
       });
   };
@@ -55,6 +61,7 @@ function Login({ msg }) {
       )} */}
       <div class="w-full max-w-xs mx-auto mt-9">
         {msg && <Colors msg={msg} color="red" />}
+        {error && <Colors msg={error} color="red" />}
         <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4">
           <div class="mb-4">
             <label

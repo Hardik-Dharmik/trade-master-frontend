@@ -12,7 +12,7 @@ function Graph({ symbol }) {
 
   const [chartType, setChartType] = useState("line");
   if (!data) return null;
-  console.log(data);
+
   const { convertedTimestamps, Xaxisvalues } = timestampToDate(
     data.timestamp,
     timePeriod

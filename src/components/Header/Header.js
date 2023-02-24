@@ -1,6 +1,6 @@
 import logo from "../../Assets/Images/logo.png";
 import HeaderLinks from "./HeaderLinks";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import {
   MagnifyingGlassIcon,
   UserCircleIcon,
@@ -8,14 +8,19 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { userState, tokenState } from "../../atoms/userAtom";
+import { userState, tokenState, firstTimeLogin } from "../../atoms/userAtom";
+import Home from "../Home/Home";
 
 function Header() {
+  let navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const [user, setuser] = useRecoilState(userState);
   const [token, settoken] = useRecoilState(tokenState);
+  const [firstimeLogin, setfirsttimeLogin] = useRecoilState(firstTimeLogin);
 
   const toggle = () => {
     setOpen(!open);
@@ -24,8 +29,12 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("firstTimeLogin");
     settoken(null);
     setuser(null);
+    setfirsttimeLogin(false);
+    // navigate("/");
+    return <Home msg="Logout successful" />;
   };
 
   return (

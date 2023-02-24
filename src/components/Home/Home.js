@@ -4,6 +4,9 @@ import logo from "../../Assets/Images/logo.png";
 import ExStock from "./ExStock";
 import { stockData } from "../../Services/Constants/stockNames";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue, useRecoilState } from "recoil";
+import { userState, firstTimeLogin } from "../../atoms/userAtom";
+import Colors from "../Alerts/Message";
 
 const topStocks = [
   ["Reliance", "RELIANCE.NS"],
@@ -20,10 +23,14 @@ const topStocks = [
   ["Bharti Airtel", "BHARTIARTL.NS"],
 ];
 
-function Home() {
+function Home({ msg }) {
   const [input, setInput] = useState("");
   let navigate = useNavigate();
 
+  console.log(msg);
+
+  const [firsttimeLogin, setfirstTimeLogin] = useRecoilState(firstTimeLogin);
+  // console.log(firstimeLogin);
   let stocks = stockData;
 
   const onSearch = (searchTerm, stockCode, exchange) => {
@@ -35,7 +42,17 @@ function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen px-2 bg-gray-100 py-2">
+    <div className="relative flex flex-col items-center min-h-screen px-2 bg-gray-100 py-2">
+      <div
+        className="md:w-1/5 w-3/5 mr-auto"
+        onClick={() => setfirstTimeLogin(false)}
+      >
+        {firsttimeLogin && <Colors color="green" msg="Login successful" />}
+      </div>
+
+      <div className="w-1/5 mr-auto">
+        {msg && <Colors color="green" msg="Logout successful" />}
+      </div>
       <div className="flex items-center mt-24 ">
         <p className="text-4xl md:text-5xl font-serif tracking-wider text-gray-800">
           Trade

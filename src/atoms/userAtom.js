@@ -9,3 +9,8 @@ export const tokenState = atom({
   key: "tokenState",
   default: window.localStorage.getItem("token"),
 });
+
+export const firstTimeLogin = atom({
+  key: "firstTimeLogin",
+  default: false,
+});
