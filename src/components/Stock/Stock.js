@@ -56,10 +56,6 @@ function Stock() {
         const Yaticker = root.lookupType("yaticker");
         const symbols = [stockID];
 
-        // for (let i = 0; i < symbols.length; i++) {
-        //   symbolData[symbols[i]] = null;
-        // }
-
         ws.current.onopen = function open() {
           console.log("connected");
           ws.current.send(
@@ -78,9 +74,6 @@ function Stock() {
         ws.current.onmessage = function incoming(data) {
           console.log("comming message");
           const response = Yaticker.decode(new Buffer(data.data, "base64"));
-          // console.log(response);
-          // symbolData[response.id] = response;
-          // console.log(symbolData);
           setLiveData({
             change: parseFloat(response.change).toFixed(2),
             changePercent: parseFloat(response.changePercent).toFixed(2),
