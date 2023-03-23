@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function PortfolioRow({ row }) {
+const format = (value) => {
+  return parseFloat(value).toFixed(2);
+};
+
+function PortfolioRow({ row, stockID }) {
+  console.log("Row -> ", row, "StockID -> ", stockID);
+
   const [openModal, setopenModal] = useState(false);
   const [stockNum, setStockNum] = useState(0);
   const [modalData, setModalData] = useState({
@@ -17,6 +23,90 @@ function PortfolioRow({ row }) {
   const handleClick = (symbol) => {
     navigate(`/stock/${symbol}`);
   };
+
+  const [stockData, setstockData] = useState(null);
+  const [profitLoss, setprofitLoss] = useState(null);
+
+  useEffect(() => {
+    if (!stockData) {
+      const URL = `${process.env.REACT_APP_BACKEND_API_URL}/stock/${stockID}`;
+
+      fetch(URL)
+        .then((response) => response.json())
+        .then((resp) => {
+          // console.log("resp->", response);
+          console.log(resp.response.result[0]);
+          let response = resp.response.result[0];
+
+          setstockData({
+            id: response.symbol,
+            change: parseFloat(response.regularMarketChange.raw).toFixed(2),
+            changePercent: parseFloat(
+              response.regularMarketChangePercent.raw
+            ).toFixed(2),
+            price: parseFloat(response.regularMarketPrice.raw).toFixed(2),
+          });
+
+          let boughtAtPrice = 100;
+          let quantity = 10;
+          let currentPrice = parseFloat(
+            response.regularMarketPrice.raw
+          ).toFixed(2);
+          let changePercent = format(response.regularMarketPrice.raw);
+
+          let totalInvestedAmount = boughtAtPrice * quantity;
+          let currentValueOfInvestedAmount = currentPrice * quantity;
+
+          let currentProfitLoss =
+            (currentValueOfInvestedAmount - totalInvestedAmount) * quantity;
+
+          let changeInValue = (currentProfitLoss * 100) / totalInvestedAmount;
+
+          setprofitLoss({
+            boughtAtPrice,
+            changePercent,
+            quantity,
+            currentPrice,
+            totalInvestedAmount,
+            currentValueOfInvestedAmount,
+            currentProfitLoss,
+            changeInValue,
+          });
+
+          console.log(stockData);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    setstockData(row);
+
+    if (!row) return;
+
+    let boughtAtPrice = 100;
+    let quantity = 10;
+    let currentPrice = parseFloat(row.price).toFixed(2);
+    let changePercent = row.changePercent;
+    let totalInvestedAmount = boughtAtPrice * quantity;
+    let currentValueOfInvestedAmount = currentPrice * quantity;
+
+    let currentProfitLoss = currentValueOfInvestedAmount - totalInvestedAmount;
+
+    let changeInValue = (currentProfitLoss * 100) / totalInvestedAmount;
+
+    setprofitLoss({
+      changePercent,
+      boughtAtPrice,
+      quantity,
+      currentPrice,
+      totalInvestedAmount,
+      currentValueOfInvestedAmount,
+      currentProfitLoss,
+      changeInValue,
+    });
+  }, [row]);
+
+  if (!stockData) return;
 
   const Modal = (
     <div
@@ -80,7 +170,7 @@ function PortfolioRow({ row }) {
                   type="number"
                   className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                   id="exampleNumber1"
-                  value={row.currentPrice}
+                  value={stockData.price}
                   disabled
                 />
               </div>
@@ -96,7 +186,7 @@ function PortfolioRow({ row }) {
                   type="number"
                   className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                   id="exampleNumber2"
-                  value={row.currentPrice * stockNum}
+                  value={stockData.price * stockNum}
                   disabled
                 />
               </div>
@@ -113,29 +203,53 @@ function PortfolioRow({ row }) {
     </div>
   );
 
+  console.log(profitLoss);
+
   return (
     <tr className="bg-white dark:bg-gray-800 hover:bg-gray-50 cursor-pointer">
-      <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        {row.symbol}
+      <td className="px-4 py-4" onClick={() => handleClick(stockData.id)}>
+        {stockData.id}
       </td>
-      <td className="px-4 py-4  onClick={() => handleClick(row.symbol)}truncate whitespace-normal">
-        {row.stockName}
+
+      <td className="px-4 py-4" onClick={() => handleClick(stockData.id)}>
+        {profitLoss.quantity}
       </td>
-      <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        {row.change}
+
+      <td className="px-4 py-4" onClick={() => handleClick(stockData.id)}>
+        {format(profitLoss.boughtAtPrice)}
       </td>
-      <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        {row.changePercent}
+
+      <td className="px-4 py-4" onClick={() => handleClick(stockData.id)}>
+        {format(profitLoss.currentPrice)}
       </td>
-      <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        {row.quantity}
+
+      <td
+        className={`px-4 py-4 ${
+          stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+        }`}
+        onClick={() => handleClick(stockData.id)}
+      >
+        ₹{format(profitLoss.currentValueOfInvestedAmount)}
       </td>
-      <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        {row.boughtAt}
+
+      <td
+        className={`px-4 py-4 ${
+          stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+        }`}
+        onClick={() => handleClick(stockData.id)}
+      >
+        ₹{format(profitLoss.changeInValue)}
       </td>
-      <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        ₹{row.currentValue}
+
+      <td
+        className={`px-4 py-4 ${
+          stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+        }`}
+        onClick={() => handleClick(stockData.id)}
+      >
+        {format(stockData.changePercent)}%
       </td>
+
       <td className="px-4 py-4">
         <div className="flex text-white">
           <button
@@ -172,6 +286,7 @@ function PortfolioRow({ row }) {
         </div>
       </td>
     </tr>
+    // <p>{JSON.stringify(stockData)}</p>
   );
 }
 
