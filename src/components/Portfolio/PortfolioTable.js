@@ -1,18 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import PortfolioRow from "./PortfolioRow";
+import DashboardCard from "../Dashboard/DashboardCard";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { tokenState } from "../../atoms/userAtom";
 import protobuf from "protobufjs";
+import useHoldings from "../../hooks/useHoldings";
 var Buffer = require("buffer/").Buffer;
 
-const stockIds = ["RR.L", "GLEN.L", "TATASTEEL.BO", "EDV.L"];
+let stockIds = [];
 
-const helper = () => {
-  let symbolData = {};
-
-  for (let i = 0; i < stockIds.length; i++) {
-    symbolData[stockIds[i]] = null;
-  }
-
-  return symbolData;
+const format = (value) => {
+  return parseFloat(value).toFixed(2);
 };
 
 const portfolioData = [
@@ -36,25 +34,39 @@ const portfolioData = [
   },
 ];
 
-function PortfolioTable() {
+function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
+  stockIds = stockIds1;
+
   const [stockData, setstockData] = useState(null);
   const [openModal, setopenModal] = useState(false);
   const [stockNum, setStockNum] = useState(0);
   const [liveData, setLiveData] = useState(null);
+  const [profitLossInfo, setProfitLossInfo] = useState({
+    profitLoss: 0,
+    currentValue: 0,
+    investedvalue: 0,
+    profitLossPercentage: 0,
+  });
+  const token = useRecoilValue(tokenState);
+  console.log(symbolData1);
+  // const [holdings, stockIds] = useHoldings(token);
+
   const ws = useRef(null);
 
-  const [symbolData, setSymbolData] = useState(helper);
+  const [symbolData, setSymbolData] = useState(symbolData1);
 
   useEffect(() => {
     for (let i = 0; i < stockIds.length; i++) {
       symbolData[stockIds[i]] = null;
     }
 
+    console.log("Sym data->", symbolData, holdings, stockIds);
+
     let currentTime = new Date(),
       t = false;
 
     let hours = currentTime.getHours();
-    if ((hours < 9 || hours >= 15) && t) {
+    if ((hours < 9 || hours >= 15) && !t) {
       setLiveData({
         change: parseFloat(stockData?.regularMarketChange.raw).toFixed(2),
         changePercent: parseFloat(
@@ -104,6 +116,37 @@ function PortfolioTable() {
     }
   }, []);
 
+  useEffect(() => {
+    let profitLoss = 0;
+
+    for (let i = 0; i < holdings.length; i++) {
+      let holding = holdings[i];
+      console.log("Data ->", symbolData[holding.stockId]);
+      profitLoss +=
+        (symbolData[holding.stockId]?.price - holding.boughtAt.$numberDecimal) *
+        holding.volume;
+    }
+
+    console.log(profitLoss);
+
+    let currentValue =
+      parseFloat(format(balanceInfo.totalAmountInvested)) +
+      parseFloat(profitLoss);
+    console.log(currentValue);
+    let investedvalue = format(balanceInfo.totalAmountInvested);
+
+    let profitLossPercentage = format(
+      ((currentValue - investedvalue) / investedvalue) * 100
+    );
+
+    setProfitLossInfo({
+      profitLoss,
+      currentValue,
+      investedvalue,
+      profitLossPercentage,
+    });
+  }, [symbolData, liveData]);
+
   const tableHeadings = [
     "Symbol",
     "Qty",
@@ -115,8 +158,40 @@ function PortfolioTable() {
     "Buy/Sell",
   ];
 
+  if (!stockIds1 || !balanceInfo) return null;
+  console.log(symbolData);
+
   return (
     <div className="relative overflow-x-auto">
+      <div className="p-2 flex flex-row min-w-fit justify-evenly items-center mb-3">
+        <DashboardCard
+          heading="Total amount invested"
+          value={format(balanceInfo.totalAmountInvested)}
+          symbol="₹"
+          isNormal
+        />
+        <DashboardCard
+          heading="Current value"
+          value={format(profitLossInfo?.currentValue)}
+          symbol="₹"
+        />
+        <DashboardCard
+          heading="Profit/Loss"
+          value={format(profitLossInfo?.profitLoss)}
+          symbol="₹"
+        />
+        <DashboardCard
+          heading="Profit/Loss %"
+          value={format(profitLossInfo.profitLossPercentage)}
+          symbol="%"
+        />
+        <DashboardCard
+          heading="Wallet amount"
+          value={format(balanceInfo.remainingBal)}
+          symbol="₹"
+          isNormal
+        />
+      </div>
       <table className="w-4/5 text-sm text-left text-gray-500 dark:text-gray-400 mx-auto">
         <thead className="text-xs text-gray-700  bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -128,8 +203,12 @@ function PortfolioTable() {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(symbolData).map((row, i) => (
-            <PortfolioRow row={symbolData[row]} stockID={row} key={i} />
+          {holdings.map((holding) => (
+            <PortfolioRow
+              row={symbolData[holding.stockId]}
+              holding={holding}
+              stockID={holding.stockId}
+            />
           ))}
         </tbody>
       </table>

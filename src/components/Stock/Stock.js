@@ -1,6 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import useLiveData from "../../hooks/useLiveData";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { tokenState } from "../../atoms/userAtom";
+
+import { buyStock } from "../../Services/Utils/TransactionHandler";
+import Colors from "../Alerts/Message";
+
 import Graph from "../Graph/Graph";
 import Statistics from "../Statistics/Statistics";
 import Summary from "../Summary/Summary";
@@ -13,13 +18,16 @@ function Stock() {
   const [openModal, setopenModal] = useState(false);
   const [stockNum, setStockNum] = useState(0);
   const [liveData, setLiveData] = useState(null);
+  const [watchListBtn, setwatchListBtn] = useState("Add to watchlist");
+  const token = useRecoilValue(tokenState);
+  // console.log(token);
   let symbolData = {};
   const ws = useRef(null);
 
   useEffect(() => {
     const URL = `${process.env.REACT_APP_BACKEND_API_URL}/stock/${stockID}`;
-
-    fetch(URL)
+    console.log(URL);
+    fetch(URL, { mode: "cors" })
       .then((response) => response.json())
       .then((response) => {
         console.log("resp->", response);
@@ -31,8 +39,21 @@ function Stock() {
     let currentTime = new Date(),
       t = true;
 
+    setLiveData({
+      change: parseFloat(stockData?.regularMarketChange.raw).toFixed(2),
+      changePercent: parseFloat(
+        stockData?.regularMarketChangePercent.raw
+      ).toFixed(2),
+      price: parseFloat(stockData?.regularMarketPrice.raw).toFixed(2),
+      time: new Date().toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      }),
+    });
+
     let hours = currentTime.getHours();
-    if ((hours < 9 || hours >= 15) && t) {
+    if ((hours < 9 || hours >= 15) && !t) {
       setLiveData({
         change: parseFloat(stockData?.regularMarketChange.raw).toFixed(2),
         changePercent: parseFloat(
@@ -89,6 +110,40 @@ function Stock() {
     }
   }, [stockData]);
 
+  const addToWatchlist = (stockSymbol) => {
+    // console.log("clicked");
+    if (token) {
+      const URL = `${process.env.REACT_APP_BACKEND_API_URL}/api/watchlist/addToWatchlist/`;
+      // const URL = "http://localhost:4000/api/watchlist/addToWatchlist/";
+      // console.log(token);
+      fetch(URL, {
+        method: "POST",
+
+        body: JSON.stringify({
+          stockId: stockSymbol,
+        }),
+
+        headers: {
+          "Content-type": "application/json",
+          AUTH_TOKEN: token,
+        },
+      })
+        .then((response) => response.json())
+        .then((response) => console.log(response));
+      setwatchListBtn("Added to watchlist.");
+      console.log(stockSymbol + " added to watchlist");
+    }
+  };
+
+  const buy = (stockId) => {
+    const price = stockData.regularMarketPrice.raw,
+      quantity = stockNum;
+
+    const purchaseInfo = { stockId, stockNum, price };
+
+    buyStock(purchaseInfo, token);
+  };
+
   const Modal = stockData && (
     <div
       tabindex="-1"
@@ -122,7 +177,7 @@ function Stock() {
             <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
               Purchase Confirmation
             </h3>
-            <form class="space-y-6" action="#">
+            <form class="space-y-6">
               <div>
                 <label
                   for="exampleNumber0"
@@ -172,7 +227,12 @@ function Stock() {
                 />
               </div>
 
-              <button class="w-full text-white bg-green-400 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+              <button
+                class="w-full text-white bg-green-400 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                onClick={() => {
+                  buy(stockID);
+                }}
+              >
                 BUY
               </button>
             </form>
@@ -183,8 +243,7 @@ function Stock() {
   );
 
   return (
-    stockData &&
-    liveData && (
+    stockData && (
       <div className="flex flex-col md:flex-row px-5 min-h-screen bg-gray-100 min-w-fit ">
         <div className="p-2 flex flex-col">
           <div className="flex flex-col md:flex-row md:items-end items-start justify-between">
@@ -224,8 +283,11 @@ function Stock() {
               <p className="my-1 text-xs">Price at {liveData?.time}</p>
             </div>
 
-            <button className="bg-blue-400 text-white rounded-lg hover:bg-blue-500 mr-10  h-fit w-fit mb-10 px-5 py-2">
-              Add to watchlist
+            <button
+              className="bg-blue-400 text-white rounded-lg hover:bg-blue-500 mr-10  h-fit w-fit mb-10 px-5 py-2"
+              onClick={() => addToWatchlist(stockData.symbol)}
+            >
+              {watchListBtn}
             </button>
 
             <button

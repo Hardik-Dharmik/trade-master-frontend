@@ -39,12 +39,14 @@ function Login({ msg }) {
       .then((response) => response.json())
       .then((json) => {
         if (json.success) {
-          setUser(json.username);
-          setToken(json.token);
-          setfirstTimeLogin(true);
           window.localStorage.setItem("user", json.username);
           window.localStorage.setItem("token", json.authtoken);
           window.localStorage.setItem("firstTimeLogin", true);
+
+          setUser(json.username);
+          setToken(json.authtoken);
+          setfirstTimeLogin(true);
+
           navigate("/");
         } else {
           seterror("Invalid credentials");

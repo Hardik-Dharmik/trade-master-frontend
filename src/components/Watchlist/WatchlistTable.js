@@ -3,7 +3,7 @@ import WatchlistRow from "./WatchlistRow";
 import protobuf from "protobufjs";
 var Buffer = require("buffer/").Buffer;
 
-const stockIds = ["RR.L", "GLEN.L", "TATASTEEL.BO"];
+let stockIds = [];
 
 const helper = () => {
   let symbolData = {};
@@ -15,14 +15,17 @@ const helper = () => {
   return symbolData;
 };
 
-function WatchlistTable() {
+function WatchlistTable({ stockIds1, symbolData1 }) {
+  console.log("dkjncjn", stockIds1);
+  console.log("klknop", symbolData1);
+  stockIds = stockIds1;
   const [stockData, setstockData] = useState(null);
   const [openModal, setopenModal] = useState(false);
   const [stockNum, setStockNum] = useState(0);
   const [liveData, setLiveData] = useState(null);
   const ws = useRef(null);
 
-  const [symbolData, setSymbolData] = useState(helper);
+  const [symbolData, setSymbolData] = useState(symbolData1);
 
   useEffect(() => {
     for (let i = 0; i < stockIds.length; i++) {
@@ -33,7 +36,7 @@ function WatchlistTable() {
       t = false;
 
     let hours = currentTime.getHours();
-    if ((hours < 9 || hours >= 15) && t) {
+    if ((hours < 9 || hours >= 15) && !t) {
       setLiveData({
         change: parseFloat(stockData?.regularMarketChange.raw).toFixed(2),
         changePercent: parseFloat(
@@ -83,6 +86,8 @@ function WatchlistTable() {
     }
   }, []);
 
+  if (!stockIds1) return null;
+  console.log(symbolData);
   return (
     <div className="relative overflow-x-auto">
       <table className="w-4/5 text-sm text-left text-gray-500 dark:text-gray-400 mx-auto">
@@ -90,9 +95,6 @@ function WatchlistTable() {
           <tr>
             <th scope="col" className="px-4 py-3">
               Symbol
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Stock name
             </th>
 
             <th scope="col" className="px-4 py-3">

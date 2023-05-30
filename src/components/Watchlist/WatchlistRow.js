@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue, useRecoilState } from "recoil";
+import { tokenState } from "../../atoms/userAtom";
+import { watchlistState } from "../../atoms/watchlistAtom";
 
 function WatchlistRow({ row, stockID }) {
   console.log("Row -> ", row, "StockID -> ", stockID);
   let navigate = useNavigate();
   // const [stockData, setstockData] = useState(row);
+  const token = useRecoilValue(tokenState);
 
+  const [watchlist, setWatchlist] = useRecoilState(watchlistState);
+  console.log("watchlist", watchlist);
   const handleClick = (symbol) => {
     navigate(`/stock/${symbol}`);
   };
@@ -50,22 +56,18 @@ function WatchlistRow({ row, stockID }) {
     setstockData(row);
   }, [row]);
 
-  // console.log(stockData);
+  const remove = async (stockID) => {
+    return;
+  };
+
   if (!stockData) return;
+
   return (
-    <tr
-      onClick={() => handleClick(stockData.id)}
-      className="bg-white dark:bg-gray-800 hover:bg-gray-50 cursor-pointer"
-    >
+    <tr className="bg-white dark:bg-gray-800 hover:bg-gray-50 cursor-pointer">
       <td onClick={() => handleClick(stockData.id)} className="px-4 py-4">
         {stockData.id}
       </td>
-      <td
-        onClick={() => handleClick(stockData.id)}
-        className="px-4 py-4  truncate whitespace-normal"
-      >
-        {stockData.stockName}
-      </td>
+
       <td onClick={() => handleClick(stockData.id)} className="px-4 py-4">
         {parseFloat(stockData.price).toFixed(2)}
       </td>
