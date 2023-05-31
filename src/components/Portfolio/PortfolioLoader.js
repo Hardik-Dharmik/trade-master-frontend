@@ -2,12 +2,16 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tokenState } from "../../atoms/userAtom";
+import { transactionAtom } from "../../atoms/transactionAtom";
 import useHoldings from "../../hooks/useHoldings";
 import DashboardCard from "../Dashboard/DashboardCard";
 import PortfolioTable from "./PortfolioTable";
 
 function PortfolioLoader() {
   const token = useRecoilValue(tokenState);
+  const transactionState = useRecoilValue(transactionAtom);
+  let temp = transactionState;
+
   const [holdings, setHoldings] = useState([]);
   const [stockIds, setStockIds] = useState([]);
   const [symbolData, setsymbolData] = useState(null);
@@ -25,7 +29,6 @@ function PortfolioLoader() {
       })
         .then((response) => response.json())
         .then((response) => {
-          console.log(response);
           setHoldings(response.holdings);
           setStockIds(response.stockIds);
           setBalanceInfo(response.balanceInfo);
@@ -41,10 +44,42 @@ function PortfolioLoader() {
           }
 
           setsymbolData(tempSym);
-          console.log("tempSym", tempSym);
         });
     }
   }, []);
+
+  useEffect(() => {
+    console.log("State changed ->", transactionState)
+
+    if (token) {
+      const URL = `${process.env.REACT_APP_BACKEND_API_URL}/api/transaction/getTransactions/`;
+
+      fetch(URL, {
+        headers: {
+          "Content-type": "application/json",
+          AUTH_TOKEN: token,
+        },
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          setHoldings(response.holdings);
+          setStockIds(response.stockIds);
+          setBalanceInfo(response.balanceInfo);
+
+          let tempSym = {};
+          for (let i = 0; i < stockIds.length; i++) {
+            let holding = holdings[i];
+
+            let volume = holding.volume,
+              boughtAt = holding.boughtAt;
+
+            tempSym[stockIds[i]] = null;
+          }
+
+          setsymbolData(tempSym);
+        });
+    }
+  }, [temp]);
 
   if (!token) return;
 

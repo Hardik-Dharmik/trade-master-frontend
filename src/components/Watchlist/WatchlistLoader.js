@@ -14,7 +14,6 @@ function WatchlistLoader({ token }) {
 
   useEffect(() => {
     if (token) {
-      console.log(token);
       const URL = "http://localhost:4000/api/watchlist/getWatchlist/";
       fetch(URL, {
         method: "POST",
@@ -26,18 +25,14 @@ function WatchlistLoader({ token }) {
       })
         .then((response) => response.json())
         .then((response) => {
-          console.log(response);
           setstockIds(response.watchlist.stockIds);
           setWatchlist(stockIds);
-          console.log("jkpokpojui", watchlist);
           let tempSym = {};
           for (let i = 0; stockIds.length; i++) {
             tempSym[stockIds[i]] = null;
           }
 
           setsymbolData(tempSym);
-
-          console.log("tempSym", tempSym);
         });
     }
   }, []);

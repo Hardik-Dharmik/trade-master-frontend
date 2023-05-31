@@ -48,7 +48,7 @@ function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
     profitLossPercentage: 0,
   });
   const token = useRecoilValue(tokenState);
-  console.log(symbolData1);
+  // console.log(symbolData1);
   // const [holdings, stockIds] = useHoldings(token);
 
   const ws = useRef(null);
@@ -60,12 +60,69 @@ function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
       symbolData[stockIds[i]] = null;
     }
 
-    console.log("Sym data->", symbolData, holdings, stockIds);
-
     let currentTime = new Date(),
       t = false;
 
     let hours = currentTime.getHours();
+
+    const URL = `${process.env.REACT_APP_BACKEND_API_URL}/getList/`;
+    // console.log(stockIds);
+    const b = JSON.stringify(stockIds);
+    // console.log("b->", b)
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(stockIds)
+
+    }).then(response => response.json())
+      .then(response => {
+
+        let resp = response.response.quoteResponse.result, tempSym = {};
+
+        for (let i = 0; i < resp.length; i++) {
+          tempSym[resp[i].symbol] = resp[i].regularMarketPrice.raw;
+        }
+
+        let profitLoss = 0;
+
+        for (let i = 0; i < holdings.length; i++) {
+          let holding = holdings[i];
+          // console.log("Data ->", tempSym[holding.stockId]);
+          profitLoss +=
+            (tempSym[holding.stockId] - holding.boughtAt.$numberDecimal) *
+            holding.volume;
+        }
+
+
+        let currentValue =
+          parseFloat(format(balanceInfo.totalAmountInvested)) +
+          parseFloat(profitLoss);
+        // console.log(currentValue);
+        let investedvalue = format(balanceInfo.totalAmountInvested);
+
+        let profitLossPercentage = format(
+          ((currentValue - investedvalue) / investedvalue) * 100
+        );
+
+        setProfitLossInfo({
+          profitLoss,
+          currentValue,
+          investedvalue,
+          profitLossPercentage,
+        });
+
+        // console.log(profitLossInfo)
+
+
+      })
+
+
+
+
+
     if ((hours < 9 || hours >= 15) && !t) {
       setLiveData({
         change: parseFloat(stockData?.regularMarketChange.raw).toFixed(2),
@@ -121,18 +178,18 @@ function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
 
     for (let i = 0; i < holdings.length; i++) {
       let holding = holdings[i];
-      console.log("Data ->", symbolData[holding.stockId]);
+      // console.log("Data ->", symbolData[holding.stockId]);
       profitLoss +=
         (symbolData[holding.stockId]?.price - holding.boughtAt.$numberDecimal) *
         holding.volume;
     }
 
-    console.log(profitLoss);
+    // console.log(profitLoss);
 
     let currentValue =
       parseFloat(format(balanceInfo.totalAmountInvested)) +
       parseFloat(profitLoss);
-    console.log(currentValue);
+    // console.log(currentValue);
     let investedvalue = format(balanceInfo.totalAmountInvested);
 
     let profitLossPercentage = format(
@@ -159,7 +216,7 @@ function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
   ];
 
   if (!stockIds1 || !balanceInfo) return null;
-  console.log(symbolData);
+  // console.log(symbolData);
 
   return (
     <div className="relative overflow-x-auto">
@@ -208,6 +265,8 @@ function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
               row={symbolData[holding.stockId]}
               holding={holding}
               stockID={holding.stockId}
+              key={holding._id}
+              holdingID={holding._id}
             />
           ))}
         </tbody>

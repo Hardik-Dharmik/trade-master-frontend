@@ -2,29 +2,23 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tokenState } from "../../atoms/userAtom";
+import { transactionAtom } from "../../atoms/transactionAtom";
 
-import { buyStock } from "../../Services/Utils/TransactionHandler";
+import { buyStock, sellStock } from "../../Services/Utils/TransactionHandler";
 
 const format = (value) => {
   return parseFloat(value).toFixed(2);
 };
 
-function PortfolioRow({ row, stockID, holding }) {
-  console.log(
-    "Row -> ",
-    row,
-    "StockID -> ",
-    stockID,
-    "Holding ->",
-    holding.boughtAt.$numberDecimal
-  );
+function PortfolioRow({ row, stockID, holding, holdingID }) {
   const token = useRecoilValue(tokenState);
-
   const [openBuyModal, setopenBuyModal] = useState(false);
   const [openSellModal, setopenSellModal] = useState(false);
   const [isBuyModal, setIsBuyModal] = useState(false);
 
-  const [stockNum, setStockNum] = useState(0);
+  const [transactionMsg, setTransactionMsg] = useRecoilState(transactionAtom);
+
+  const [stockNum, setStockNum] = useState(1);
   const [modalData, setModalData] = useState({
     title: "Purchase Confirmation",
     quantity: "Stocks quantity to buy",
@@ -33,6 +27,9 @@ function PortfolioRow({ row, stockID, holding }) {
     btnbgColor: "bg-green-400",
   });
 
+  const [stockData, setstockData] = useState(null);
+  const [profitLoss, setprofitLoss] = useState(null);
+
   let navigate = useNavigate();
 
   const handleClick = (symbol) => {
@@ -40,18 +37,40 @@ function PortfolioRow({ row, stockID, holding }) {
   };
 
   const buy = (stockId) => {
-    const price = stockData.regularMarketPrice.raw,
+    const price = profitLoss.currentPrice,
       quantity = stockNum;
 
     const purchaseInfo = { stockId, stockNum, price };
 
-    console.log(purchaseInfo);
-
     buyStock(purchaseInfo, token);
+
+    setopenBuyModal(false);
+
+    setTransactionMsg({
+      isMsgAvailable: true,
+      msg: "Purchase successful !! \n" + (price * quantity) + " ₹ has been debited."
+    })
+
+    navigate(`/portfolio/`);
   };
 
-  const [stockData, setstockData] = useState(null);
-  const [profitLoss, setprofitLoss] = useState(null);
+  const sell = (holdingId) => {
+    const price = profitLoss.currentPrice,
+      quantity = stockNum;
+
+    const purchaseInfo = { holdingId, stockNum, price };
+
+    sellStock(purchaseInfo, token);
+
+    setopenSellModal(false);
+
+    setTransactionMsg({
+      isMsgAvailable: true,
+      msg: "Sell successful !! \n " + (price * quantity) + " ₹ has been credited."
+    })
+
+    navigate(`/portfolio/`);
+  }
 
   useEffect(() => {
     if (!stockData) {
@@ -60,8 +79,6 @@ function PortfolioRow({ row, stockID, holding }) {
       fetch(URL)
         .then((response) => response.json())
         .then((resp) => {
-          // console.log("resp->", response);
-          console.log(resp.response.result[0]);
           let response = resp.response.result[0];
 
           setstockData({
@@ -98,8 +115,6 @@ function PortfolioRow({ row, stockID, holding }) {
             currentProfitLoss,
             changeInValue,
           });
-
-          console.log(stockData);
         });
     }
   }, []);
@@ -167,7 +182,7 @@ function PortfolioRow({ row, stockID, holding }) {
             <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">
               Purchase Confirmation
             </h3>
-            <form className="space-y-6">
+            <div className="space-y-6">
               <div>
                 <label
                   for="exampleNumber0"
@@ -177,7 +192,7 @@ function PortfolioRow({ row, stockID, holding }) {
                 </label>
                 <input
                   type="number"
-                  min={0}
+                  min={1}
                   className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                   id="exampleNumber0"
                   placeholder="Ex. 1, 10, 100, 500 etc"
@@ -207,7 +222,7 @@ function PortfolioRow({ row, stockID, holding }) {
                   for="exampleNumber2"
                   className="form-label inline-block mb-2 text-gray-700"
                 >
-                  Cost
+                  Order Cost
                 </label>
                 <input
                   type="number"
@@ -221,26 +236,19 @@ function PortfolioRow({ row, stockID, holding }) {
               <button
                 class="w-full text-white bg-green-400 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 onClick={() => {
-                  const price = profitLoss.currentPrice,
-                    quantity = stockNum;
-
-                  const purchaseInfo = { stockId: stockID, stockNum, price };
-
-                  console.log(purchaseInfo);
-
-                  buyStock(purchaseInfo, token);
+                  buy(stockID);
                 }}
               >
                 BUY
               </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 
-  const sellModal = (
+  const sellModal = stockData && (
     <div
       tabindex="-1"
       aria-hidden="true"
@@ -273,7 +281,7 @@ function PortfolioRow({ row, stockID, holding }) {
             <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">
               Sell Confirmation
             </h3>
-            <form className="space-y-6">
+            <div className="space-y-6">
               <div>
                 <label
                   for="exampleNumber0"
@@ -327,17 +335,33 @@ function PortfolioRow({ row, stockID, holding }) {
 
               <button
                 className={`w-full text-white bg-red-600 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}
+                onClick={() => {
+                  const price = profitLoss.currentPrice,
+                    quantity = stockNum;
+
+                  const purchaseInfo = { holdingId: holdingID, stockNum, price };
+                  // console.log(purchaseInfo)
+                  sellStock(purchaseInfo, token);
+
+                  setopenSellModal(false);
+
+                  setTransactionMsg({
+                    isMsgAvailable: true,
+                    msg: "Sell successful !! \n" + (price * quantity) + " ₹ has been credited."
+                  })
+
+                  navigate(`/portfolio/`);
+                  // sell(holdingID)
+                }}
               >
                 SELL
               </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
-
-  console.log("row->", row);
 
   return (
     <tr className="bg-white dark:bg-gray-800 hover:bg-gray-50 cursor-pointer">
@@ -358,27 +382,24 @@ function PortfolioRow({ row, stockID, holding }) {
       </td>
 
       <td
-        className={`px-4 py-4 ${
-          stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
-        }`}
+        className={`px-4 py-4 ${stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+          }`}
         onClick={() => handleClick(stockData.id)}
       >
         ₹{format(profitLoss.currentValueOfInvestedAmount)}
       </td>
 
       <td
-        className={`px-4 py-4 ${
-          stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
-        }`}
+        className={`px-4 py-4 ${stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+          }`}
         onClick={() => handleClick(stockData.id)}
       >
         ₹{format(profitLoss.changeInValue)}
       </td>
 
       <td
-        className={`px-4 py-4 ${
-          stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
-        }`}
+        className={`px-4 py-4 ${stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+          }`}
         onClick={() => handleClick(stockData.id)}
       >
         {format(stockData.changePercent)}%

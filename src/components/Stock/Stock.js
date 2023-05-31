@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tokenState } from "../../atoms/userAtom";
 
@@ -16,12 +16,15 @@ function Stock() {
   const { stockID } = useParams();
   const [stockData, setstockData] = useState(null);
   const [openModal, setopenModal] = useState(false);
-  const [stockNum, setStockNum] = useState(0);
+  const [stockNum, setStockNum] = useState(1);
   const [liveData, setLiveData] = useState(null);
   const [watchListBtn, setwatchListBtn] = useState("Add to watchlist");
   const token = useRecoilValue(tokenState);
   // console.log(token);
   let symbolData = {};
+
+  let navigate = useNavigate();
+
   const ws = useRef(null);
 
   useEffect(() => {
@@ -142,6 +145,8 @@ function Stock() {
     const purchaseInfo = { stockId, stockNum, price };
 
     buyStock(purchaseInfo, token);
+
+    navigate(`/portfolio/`);
   };
 
   const Modal = stockData && (

@@ -16,8 +16,6 @@ const helper = () => {
 };
 
 function WatchlistTable({ stockIds1, symbolData1 }) {
-  console.log("dkjncjn", stockIds1);
-  console.log("klknop", symbolData1);
   stockIds = stockIds1;
   const [stockData, setstockData] = useState(null);
   const [openModal, setopenModal] = useState(false);
@@ -87,7 +85,7 @@ function WatchlistTable({ stockIds1, symbolData1 }) {
   }, []);
 
   if (!stockIds1) return null;
-  console.log(symbolData);
+
   return (
     <div className="relative overflow-x-auto">
       <table className="w-4/5 text-sm text-left text-gray-500 dark:text-gray-400 mx-auto">

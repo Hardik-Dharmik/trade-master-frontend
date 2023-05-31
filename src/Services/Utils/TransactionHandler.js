@@ -1,5 +1,5 @@
 export const buyStock = (purchaseInfo, token) => {
-  console.log(purchaseInfo);
+  // console.log(purchaseInfo);
 
   const URL = `${process.env.REACT_APP_BACKEND_API_URL}/api/transaction/buy/`;
 
@@ -17,4 +17,29 @@ export const buyStock = (purchaseInfo, token) => {
   })
     .then((response) => response.json())
     .then((response) => console.log(response));
+
+  return;
+};
+
+export const sellStock = (purchaseInfo, token) => {
+  // console.log("sellinfo->", purchaseInfo);
+
+  const URL = `${process.env.REACT_APP_BACKEND_API_URL}/api/transaction/sell/`;
+
+  fetch(URL, {
+    method: "POST",
+
+    body: JSON.stringify({
+      purchaseInfo: purchaseInfo,
+    }),
+
+    headers: {
+      "Content-type": "application/json",
+      AUTH_TOKEN: token,
+    },
+  })
+    .then((response) => response.json())
+    .then((response) => console.log(response));
+
+  return;
 };
