@@ -14,7 +14,7 @@ function WatchlistLoader({ token }) {
 
   useEffect(() => {
     if (token) {
-      const URL = "http://localhost:4000/api/watchlist/getWatchlist/";
+      const URL = `${process.env.REACT_APP_BACKEND_API_URL}/api/watchlist/getWatchlist/`;
       fetch(URL, {
         method: "POST",
 

@@ -7,7 +7,6 @@ function TransactionLoader() {
 
   return (
     <div>
-      TransactionLoader
       <TransactionTable />
     </div>
   );

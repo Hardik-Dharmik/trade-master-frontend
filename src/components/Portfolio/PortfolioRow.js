@@ -101,9 +101,12 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
           let currentValueOfInvestedAmount = currentPrice * quantity;
 
           let currentProfitLoss =
-            (currentValueOfInvestedAmount - totalInvestedAmount) * quantity;
+            (currentValueOfInvestedAmount - totalInvestedAmount);
 
           let changeInValue = (currentProfitLoss * 100) / totalInvestedAmount;
+
+          console.log("Change in value 2.0 -> ", changeInValue, currentProfitLoss)
+
 
           setprofitLoss({
             boughtAtPrice,
@@ -134,7 +137,7 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
     let currentProfitLoss = currentValueOfInvestedAmount - totalInvestedAmount;
 
     let changeInValue = (currentProfitLoss * 100) / totalInvestedAmount;
-
+    console.log("Change in value -> ", changeInValue, currentProfitLoss)
     setprofitLoss({
       changePercent,
       boughtAtPrice,
@@ -374,35 +377,37 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
       </td>
 
       <td className="px-4 py-4" onClick={() => handleClick(stockData.id)}>
-        {format(profitLoss.boughtAtPrice)}
+        {format(profitLoss.boughtAtPrice)}₹
       </td>
 
       <td className="px-4 py-4" onClick={() => handleClick(stockData.id)}>
-        {format(profitLoss.currentPrice)}
+        {format(profitLoss.currentPrice)}₹
       </td>
 
       <td
-        className={`px-4 py-4 ${stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+        className={`px-4 py-4 ${profitLoss.changeInValue > 0 ? "text-green-500" : "text-red-700"
           }`}
         onClick={() => handleClick(stockData.id)}
       >
-        ₹{format(profitLoss.currentValueOfInvestedAmount)}
+        {format(profitLoss.currentValueOfInvestedAmount)}₹
       </td>
 
       <td
-        className={`px-4 py-4 ${stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+        className={`px-4 py-4 ${profitLoss.changeInValue > 0 ? "text-green-500" : "text-red-700"
           }`}
         onClick={() => handleClick(stockData.id)}
       >
-        ₹{format(profitLoss.changeInValue)}
+        {profitLoss.changeInValue > 0 && "+"}
+        {format(profitLoss.currentProfitLoss)}₹
       </td>
 
       <td
-        className={`px-4 py-4 ${stockData.changePercent > 0 ? "text-green-500" : "text-red-700"
+        className={`px-4 py-4 ${profitLoss.changeInValue > 0 ? "text-green-500" : "text-red-700"
           }`}
         onClick={() => handleClick(stockData.id)}
       >
-        {format(stockData.changePercent)}%
+        {profitLoss.changeInValue > 0 && "+"}
+        {format(profitLoss.changeInValue)}%
       </td>
 
       <td className="px-4 py-4">
@@ -443,7 +448,6 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
         </div>
       </td>
     </tr>
-    // <p>{JSON.stringify(stockData)}</p>
   );
 }
 

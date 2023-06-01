@@ -40,7 +40,7 @@ function Stock() {
 
   useEffect(() => {
     let currentTime = new Date(),
-      t = true;
+      t = false;
 
     setLiveData({
       change: parseFloat(stockData?.regularMarketChange.raw).toFixed(2),
@@ -56,7 +56,8 @@ function Stock() {
     });
 
     let hours = currentTime.getHours();
-    if ((hours < 9 || hours >= 15) && !t) {
+
+    if ((hours < 9 || hours >= 15) && t) {
       setLiveData({
         change: parseFloat(stockData?.regularMarketChange.raw).toFixed(2),
         changePercent: parseFloat(
@@ -84,7 +85,7 @@ function Stock() {
           console.log("connected");
           ws.current.send(
             JSON.stringify({
-              subscribe: symbols,
+              subscribe: [stockID],
             })
           );
         };
@@ -97,7 +98,9 @@ function Stock() {
 
         ws.current.onmessage = function incoming(data) {
           console.log("comming message");
+          // console.log(data)
           const response = Yaticker.decode(new Buffer(data.data, "base64"));
+
           setLiveData({
             change: parseFloat(response.change).toFixed(2),
             changePercent: parseFloat(response.changePercent).toFixed(2),
@@ -265,21 +268,19 @@ function Stock() {
                   {liveData && parseFloat(liveData.price).toFixed(2)} ₹
                 </p>
                 <p
-                  className={`mx-3 text-xl font-semibold ${
-                    liveData && liveData.change > 0
-                      ? "text-green-500"
-                      : "text-red-700"
-                  }`}
+                  className={`mx-3 text-xl font-semibold ${liveData && liveData.change > 0
+                    ? "text-green-500"
+                    : "text-red-700"
+                    }`}
                 >
                   {liveData && liveData.change > 0 && "+"}
                   {liveData && parseFloat(liveData.change).toFixed(2)}
                 </p>
                 <p
-                  className={`text-xl font-semibold ${
-                    liveData?.changePercent > 0
-                      ? "text-green-500"
-                      : "text-red-700"
-                  }`}
+                  className={`text-xl font-semibold ${liveData?.changePercent > 0
+                    ? "text-green-500"
+                    : "text-red-700"
+                    }`}
                 >
                   ({liveData?.changePercent > 0 && "+"}
                   {liveData && parseFloat(liveData.changePercent).toFixed(2)}%)

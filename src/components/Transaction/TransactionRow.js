@@ -23,25 +23,27 @@ function TransactionRow({ row }) {
       <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
         {row.symbol}
       </td>
-      <td className="px-4 py-4  onClick={() => handleClick(row.symbol)}truncate whitespace-normal">
-        {row.stockName}
+      <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
+        {row.type}
       </td>
 
       <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        {row.quantity}
+        {row.volume}
       </td>
       <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
         ₹{row.boughtAt}
       </td>
       <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        ₹100
+        ₹{row.soldAt}
       </td>
+
       <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        1.27%
+        <span className={`${row.type === 'SELL' ? "text-green-500" : "text-red-700"
+          }`}>
+          ₹{Math.abs(row.debitCredit)}</span>
+        {row.type === 'SELL' ? " credited." : " debited."}
       </td>
-      <td className="px-4 py-4" onClick={() => handleClick(row.symbol)}>
-        ₹19883
-      </td>
+
     </tr>
   );
 }

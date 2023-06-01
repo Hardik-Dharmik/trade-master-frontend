@@ -13,26 +13,6 @@ const format = (value) => {
   return parseFloat(value).toFixed(2);
 };
 
-const portfolioData = [
-  {
-    symbol: "TATASTEEL.BO",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "ADANIPOWER.BO",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-];
 
 function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
   stockIds = stockIds1;
@@ -100,7 +80,6 @@ function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
         let currentValue =
           parseFloat(format(balanceInfo.totalAmountInvested)) +
           parseFloat(profitLoss);
-        // console.log(currentValue);
         let investedvalue = format(balanceInfo.totalAmountInvested);
 
         let profitLossPercentage = format(
@@ -163,7 +142,7 @@ function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
         ws.current.onmessage = function incoming(data) {
           console.log("comming message");
           const response = Yaticker.decode(new Buffer(data.data, "base64"));
-
+          // console.log(response)
           setSymbolData((prevState) => ({
             ...prevState,
             [response.id]: response,
@@ -229,7 +208,7 @@ function PortfolioTable({ holdings, symbolData1, stockIds1, balanceInfo }) {
         />
         <DashboardCard
           heading="Current value"
-          value={format(profitLossInfo?.currentValue)}
+          value={profitLossInfo.profitLoss < 0 ? (-1 * format(profitLossInfo?.currentValue)) : format(profitLossInfo?.currentValue)}
           symbol="₹"
         />
         <DashboardCard

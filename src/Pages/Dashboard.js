@@ -42,29 +42,27 @@ function Dashboard() {
     <div className="min-h-screen px-2 bg-gray-100 py-2 min-w-fit">
       <p className="mx-14 text-xl font-semibold">Your wallet</p>
 
-      <div className="p-2 flex flex-row min-w-fit justify-evenly items-center">
+      {/* <div className="p-2 flex flex-row min-w-fit justify-evenly items-center">
         <DashboardCard heading="Total amount invested" value={10000} />
         <DashboardCard heading="Profit/Loss" value={10000} />
         <DashboardCard heading="Profit/Loss %" value={10000} />
         <DashboardCard heading="Wallet amount" value={10000} />
-      </div>
+      </div> */}
 
       <div className="flex flex-col md:flex-row ml-14">
         <div className="flex flex-col">
           <div className="flex my-4 items-center">
             <p
-              className={` mx-2 px-3 py-2 hover:bg-blue-100  hover:text-blue-500 cursor-pointer outline-none max-w-fit ${
-                index === "%5EBSESN" && "text-blue-500 bg-blue-100"
-              }`}
+              className={` mx-2 px-3 py-2 hover:bg-blue-100  hover:text-blue-500 cursor-pointer outline-none max-w-fit ${index === "%5EBSESN" && "text-blue-500 bg-blue-100"
+                }`}
               onClick={() => setIndex("%5EBSESN")}
             >
               Sensex
             </p>
 
             <p
-              className={` mx-2 px-3 py-2 hover:bg-blue-100  hover:text-blue-500 cursor-pointer outline-none max-w-fit ${
-                index === "%5ENSEI" && "text-blue-500 bg-blue-100"
-              }`}
+              className={` mx-2 px-3 py-2 hover:bg-blue-100  hover:text-blue-500 cursor-pointer outline-none max-w-fit ${index === "%5ENSEI" && "text-blue-500 bg-blue-100"
+                }`}
               onClick={() => setIndex("%5ENSEI")}
             >
               Nifty
@@ -82,21 +80,19 @@ function Dashboard() {
                 {stockData.regularMarketPrice.fmt}
               </p>
               <p
-                className={`mx-3 text-xl font-semibold ${
-                  stockData.regularMarketChange.raw > 0
+                className={`mx-3 text-xl font-semibold ${stockData.regularMarketChange.raw > 0
                     ? "text-green-500"
                     : "text-red-500"
-                }`}
+                  }`}
               >
                 {stockData.regularMarketChange.raw > 0 && "+"}
                 {stockData.regularMarketChange.fmt}
               </p>
               <p
-                className={`text-xl font-semibold ${
-                  stockData.regularMarketChange.raw > 0
+                className={`text-xl font-semibold ${stockData.regularMarketChange.raw > 0
                     ? "text-green-500"
                     : "text-red-500"
-                }`}
+                  }`}
               >
                 ({stockData.regularMarketChange.raw > 0 && "+"}
                 {stockData.regularMarketChangePercent.fmt})
