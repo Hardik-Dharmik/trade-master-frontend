@@ -5,12 +5,17 @@ import { tokenState } from "../../atoms/userAtom";
 import { watchlistState } from "../../atoms/watchlistAtom";
 import WatchlistTable from "./WatchlistTable";
 
+import { Bars } from 'react-loader-spinner'
+
+
 function WatchlistLoader({ token }) {
   // const [token, setToken] = useRecoilState(tokenState);
   const [watchlist, setWatchlist] = useRecoilState(watchlistState);
 
   const [stockIds, setstockIds] = useState([]);
   const [symbolData, setsymbolData] = useState(null);
+  const [isLoading, setisLoading] = useState(true);
+
 
   useEffect(() => {
     if (token) {
@@ -33,7 +38,11 @@ function WatchlistLoader({ token }) {
           }
 
           setsymbolData(tempSym);
+
         });
+
+      const timer = setTimeout(() => setisLoading(false), 2000);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -43,7 +52,22 @@ function WatchlistLoader({ token }) {
     token &&
     stockIds &&
     symbolData && (
-      <WatchlistTable stockIds1={stockIds} symbolData1={symbolData} />
+      <div className={`${isLoading && 'flex justify-center items-center mt-40'}`}>
+        {
+          isLoading ? <div className="flex -mt-5">
+            <Bars
+              height="100"
+              width="100"
+              color="#4fa94d"
+              ariaLabel="bars-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+          </div> :
+            <WatchlistTable stockIds1={stockIds} symbolData1={symbolData} />
+        }
+      </div>
     )
   );
 }

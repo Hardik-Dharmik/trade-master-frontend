@@ -29,6 +29,7 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
 
   const [stockData, setstockData] = useState(null);
   const [profitLoss, setprofitLoss] = useState(null);
+  const [warning, setWarning] = useState(false);
 
   let navigate = useNavigate();
 
@@ -149,6 +150,16 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
       changeInValue,
     });
   }, [row]);
+
+  useEffect(() => {
+    if (profitLoss && stockNum > profitLoss.quantity) {
+      setWarning(true);
+    } else {
+      setWarning(false);
+    }
+
+  }, [stockNum])
+
 
   if (!stockData || !holding || !stockID) return;
 
@@ -302,6 +313,7 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
                   value={stockNum}
                   onChange={(e) => setStockNum(e.target.value)}
                 />
+                {warning && <p className="mt-2 text-red-600">Volume exceeds holding !!</p>}
               </div>
 
               <div>
@@ -337,7 +349,8 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
               </div>
 
               <button
-                className={`w-full text-white bg-red-600 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}
+                disabled={warning}
+                className={`w-full text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ${!warning ? 'bg-red-600 hover:bg-green-500' : 'bg-red-200'}`}
                 onClick={() => {
                   const price = profitLoss.currentPrice,
                     quantity = stockNum;

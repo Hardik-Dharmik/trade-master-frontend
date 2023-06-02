@@ -4,180 +4,17 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tokenState } from "../../atoms/userAtom";
+import { Bars } from 'react-loader-spinner'
 
 const format = (value) => {
   return parseFloat(value).toFixed(2);
 };
 
-const portfolioData = [
-  {
-    symbol: "TATASTEEL.BO",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "ADANIPOWER.BO",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-  {
-    symbol: "TATASTEEL",
-    stockName: "Tata Steel Pvt. Ltd",
-    change: "1.2",
-    changePercent: "0.1%",
-    quantity: "100",
-    boughtAt: "101.3",
-    currentValue: "110.23",
-  },
-
-];
-
 function TransactionTable() {
   const token = useRecoilValue(tokenState);
   const [transactions, setTransactions] = useState([]);
+  const [isLoading, setisLoading] = useState(true);
+
 
   useEffect(() => {
     if (token) {
@@ -212,8 +49,8 @@ function TransactionTable() {
           }
 
           setTransactions(tempTransactions);
-
-          console.log(transactions)
+          const timer = setTimeout(() => setisLoading(false), 2000);
+          return () => clearTimeout(timer);
 
         });
     }
@@ -224,37 +61,51 @@ function TransactionTable() {
   console.log(transactions)
 
   return (
-    <div className="relative overflow-x-auto">
-      <table className="w-4/5 text-sm text-left text-gray-500 dark:text-gray-400 mx-auto">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th scope="col" className="px-4 py-3">
-              Symbol
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Type
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Quantity
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Bought at
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Sold At
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Debit/Credit
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((row) => (
-            <TransactionRow row={row} />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <div className={`${isLoading && 'flex justify-center items-center mt-40'}`}>
+      {
+        isLoading ? <div className="flex -mt-5">
+          <Bars
+            height="100"
+            width="100"
+            color="#4fa94d"
+            ariaLabel="bars-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+        </div> : <div className="relative overflow-x-auto">
+          <table className="w-4/5 text-sm text-left text-gray-500 dark:text-gray-400 mx-auto">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="px-4 py-3">
+                  Symbol
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Type
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Quantity
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Bought at
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Sold At
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Debit/Credit
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map((row) => (
+                <TransactionRow row={row} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      }
+    </div >
   );
 }
 

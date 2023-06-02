@@ -7,6 +7,8 @@ import useHoldings from "../../hooks/useHoldings";
 import DashboardCard from "../Dashboard/DashboardCard";
 import PortfolioTable from "./PortfolioTable";
 
+import { Bars } from 'react-loader-spinner'
+
 function PortfolioLoader() {
   const token = useRecoilValue(tokenState);
   const transactionState = useRecoilValue(transactionAtom);
@@ -16,11 +18,13 @@ function PortfolioLoader() {
   const [stockIds, setStockIds] = useState([]);
   const [symbolData, setsymbolData] = useState(null);
   const [balanceInfo, setBalanceInfo] = useState(null);
+  const [isLoading, setisLoading] = useState(true);
 
   useEffect(() => {
     if (token) {
       const URL = `${process.env.REACT_APP_BACKEND_API_URL}/api/transaction/getTransactions/`;
 
+      // setisLoading(true);
       fetch(URL, {
         headers: {
           "Content-type": "application/json",
@@ -36,14 +40,15 @@ function PortfolioLoader() {
           let tempSym = {};
           for (let i = 0; i < stockIds.length; i++) {
             let holding = holdings[i];
-
-            let volume = holding.volume,
-              boughtAt = holding.boughtAt;
-
             tempSym[stockIds[i]] = null;
           }
 
           setsymbolData(tempSym);
+
+          const timer = setTimeout(() => setisLoading(false), 2000);
+          return () => clearTimeout(timer);
+
+          // setisLoading(false)
         });
     }
   }, []);
@@ -88,13 +93,26 @@ function PortfolioLoader() {
     stockIds &&
     symbolData &&
     balanceInfo && (
-      <div>
-        <PortfolioTable
-          holdings={holdings}
-          symbolData1={symbolData}
-          stockIds1={stockIds}
-          balanceInfo={balanceInfo}
-        />
+      <div className={`${isLoading && 'flex justify-center items-center mt-40'}`}>
+        {
+          isLoading ? <div className="flex -mt-5">
+            <Bars
+              height="100"
+              width="100"
+              color="#4fa94d"
+              ariaLabel="bars-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+          </div> : <PortfolioTable
+            holdings={holdings}
+            symbolData1={symbolData}
+            stockIds1={stockIds}
+            balanceInfo={balanceInfo}
+          />
+        }
+
       </div>
     )
   );
