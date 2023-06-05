@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { UserIcon, EyeIcon } from "@heroicons/react/24/outline";
 import { useRecoilState } from "recoil";
 import { userState, tokenState, firstTimeLogin } from "../atoms/userAtom";
+import { transactionAtom } from "../atoms/transactionAtom";
 import { useNavigate } from "react-router-dom";
 import Colors from "../components/Alerts/Message";
+import { ColorRing } from 'react-loader-spinner'
+
 
 function Login({ msg }) {
   let navigate = useNavigate();
@@ -13,6 +16,9 @@ function Login({ msg }) {
   const [user, setUser] = useRecoilState(userState);
   const [token, setToken] = useRecoilState(tokenState);
   const [firsttimeLogin, setfirstTimeLogin] = useRecoilState(firstTimeLogin);
+  const [isLoading, setIsLoading] = useState(false);
+  const [transactionMsg, setTransactionMsg] = useRecoilState(transactionAtom);
+
 
   const [formData, setFormData] = useState({
     email: "",
@@ -27,6 +33,7 @@ function Login({ msg }) {
   };
 
   const handleLogin = () => {
+    setIsLoading(true);
     fetch(`${process.env.REACT_APP_BACKEND_API_URL}/api/auth/login`, {
       method: "POST",
 
@@ -47,6 +54,8 @@ function Login({ msg }) {
           setToken(json.authtoken);
           setfirstTimeLogin(true);
 
+          setIsLoading(false);
+
           navigate("/");
         } else {
           seterror("Invalid credentials");
@@ -56,11 +65,15 @@ function Login({ msg }) {
 
   return (
     <div className="flex flex-col min-h-screen px-5 bg-gray-100 py-2 ">
-      {/* {msg && (
-        <p className="w-fit mx-auto bg-red-400 p-2 text-white rounded-lg mt-3">
-          {msg}
-        </p>
-      )} */}
+      <div
+        className="md:w-1/5 w-3/5 mr-auto"
+        onClick={() => setTransactionMsg({
+          isMsgAvailable: false,
+          msg: ""
+        })}
+      >
+        {transactionMsg.isMsgAvailable && <Colors color="green" msg={transactionMsg.msg} />}
+      </div>
       <div class="w-full max-w-xs mx-auto mt-9">
         {msg && <Colors msg={msg} color="red" />}
         {error && <Colors msg={error} color="red" />}
@@ -113,10 +126,19 @@ function Login({ msg }) {
           </div>
           <div class="flex items-center justify-between">
             <button
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              class="flex items-center  bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
               onClick={handleLogin}
             >
+              {isLoading && <ColorRing
+                visible={true}
+                height="30"
+                width="30"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={['#fff', '#fff', '#fff', '#fff', '#fff']}
+              />}
               Login
             </button>
             <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">

@@ -10,9 +10,6 @@ import Colors from "../components/Alerts/Message";
 function Portfolio() {
   const token = useRecoilValue(userState);
   const [transactionMsg, setTransactionMsg] = useRecoilState(transactionAtom);
-  const location = useLocation();
-  // console.log(location)
-  // console.log(transactionMsg)
 
   if (!token) return <Login msg="Please login to continue !!" />;
 

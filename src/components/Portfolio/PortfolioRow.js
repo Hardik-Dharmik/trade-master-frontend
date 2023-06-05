@@ -106,7 +106,7 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
 
           let changeInValue = (currentProfitLoss * 100) / totalInvestedAmount;
 
-          console.log("Change in value 2.0 -> ", changeInValue, currentProfitLoss)
+          // console.log("Change in value 2.0 -> ", changeInValue, currentProfitLoss)
 
 
           setprofitLoss({
@@ -138,7 +138,7 @@ function PortfolioRow({ row, stockID, holding, holdingID }) {
     let currentProfitLoss = currentValueOfInvestedAmount - totalInvestedAmount;
 
     let changeInValue = (currentProfitLoss * 100) / totalInvestedAmount;
-    console.log("Change in value -> ", changeInValue, currentProfitLoss)
+    // console.log("Change in value -> ", changeInValue, currentProfitLoss)
     setprofitLoss({
       changePercent,
       boughtAtPrice,

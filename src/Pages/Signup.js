@@ -3,6 +3,9 @@ import FormButton from "../components/Form/FormButton";
 import FormFooter from "../components/Form/FormFooter";
 import { UserIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import { ColorRing } from 'react-loader-spinner';
+import { useRecoilState } from "recoil";
+import { transactionAtom } from "../atoms/transactionAtom";
 
 function Signup() {
   let navigate = useNavigate();
@@ -13,6 +16,10 @@ function Signup() {
     password: "",
     cpassword: "",
   });
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [transactionMsg, setTransactionMsg] = useRecoilState(transactionAtom);
+
 
   const handleChange = (e) => {
     setFormData((prevState) => ({
@@ -22,6 +29,35 @@ function Signup() {
   };
 
   const handleSignin = () => {
+    let errorString = "";
+    if (formData.email === "" || formData.name === "" || formData.password === "" || formData.cpassword === "") {
+      errorString += "Required fields :  ";
+    }
+
+    if (formData.email === "") {
+      errorString += "Email, ";
+    }
+
+    if (formData.name === "") {
+      errorString += "Name, ";
+    }
+
+    if (formData.password === "") {
+      errorString += "Password, ";
+    }
+
+    if (errorString != "")
+      errorString = errorString.substring(0, errorString.length - 2);
+
+    console.log(errorString);
+
+    setError(errorString)
+
+    if (errorString !== "")
+      return;
+
+
+    setIsLoading(true);
     fetch(`${process.env.REACT_APP_BACKEND_API_URL}/api/auth/register`, {
       method: "POST",
 
@@ -33,6 +69,11 @@ function Signup() {
     })
       .then((response) => response.json())
       .then((json) => {
+        setTransactionMsg({
+          isMsgAvailable: true,
+          msg: "Signup successfull !!"
+        })
+        setIsLoading(false);
         navigate("/login");
       });
   };
@@ -48,7 +89,7 @@ function Signup() {
             >
               Username
             </label>
-            <div className="flex items-center shadow appearance-none  rounded w-full py-2 px-3 text-gray-700 leading-tight  justify-between">
+            <div className={`flex items-center shadow appearance-none  rounded w-full py-2 px-3 text-gray-700 leading-tight  justify-between `}>
               <input
                 class="focus:outline-none focus:shadow-outline flex-grow"
                 id="username"
@@ -60,6 +101,7 @@ function Signup() {
               />
               <UserIcon className="h-5 w-5 ml-2 text-gray-500" />
             </div>
+            {formData.name === "" && <p className="text-red-300 text-sm my-1">Required</p>}
           </div>
 
           <div class="mb-4">
@@ -69,7 +111,7 @@ function Signup() {
             >
               Email
             </label>
-            <div className="flex items-center shadow appearance-none  rounded w-full py-2 px-3 text-gray-700 leading-tight  justify-between">
+            <div className={`flex items-center shadow appearance-none  rounded w-full py-2 px-3 text-gray-700 leading-tight  justify-between `}>
               <input
                 class="focus:outline-none focus:shadow-outline flex-grow"
                 id="email"
@@ -78,9 +120,11 @@ function Signup() {
                 placeholder="abc@gmail.com"
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
               <EnvelopeIcon className="h-5 w-5 ml-2 text-gray-500" />
             </div>
+            {formData.email === "" && <p className="text-red-300 text-sm my-1">Required</p>}
           </div>
 
           <div class="mb-6">
@@ -90,7 +134,7 @@ function Signup() {
             >
               Password
             </label>
-            <div className="flex items-center shadow appearance-none  rounded w-full py-2 px-3 text-gray-700 leading-tight  justify-between">
+            <div className={`flex items-center shadow appearance-none  rounded w-full py-2 px-3 text-gray-700 leading-tight  justify-between `}>
               <input
                 class="focus:outline-none focus:shadow-outline flex-grow"
                 id="password"
@@ -108,6 +152,7 @@ function Signup() {
                 }}
               />
             </div>
+            {formData.password === "" && <p className="text-red-300 text-sm my-1">Required</p>}
           </div>
 
           <div class="mb-6">
@@ -139,10 +184,20 @@ function Signup() {
 
           <div class="flex items-center justify-between">
             <button
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              class="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
               onClick={handleSignin}
+              disabled={error !== ""}
             >
+              {isLoading && <ColorRing
+                visible={true}
+                height="30"
+                width="30"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={['#fff', '#fff', '#fff', '#fff', '#fff']}
+              />}
               Signup
             </button>
             <div class="flex items-center my-3">
